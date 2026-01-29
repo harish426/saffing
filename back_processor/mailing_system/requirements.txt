@@ -3,3 +3,9 @@ uvicorn
 sqlalchemy
 psycopg[binary]
 python-dotenv
+faiss-cpu
+sentence-transformers
+tf-keras
+openAI
+google-genai
+

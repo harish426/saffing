@@ -1,0 +1,9 @@
+.env
+.env.example
+error.log
+venv
+faiss_store
+.env*
+.env
+**/.env
+**/*.env

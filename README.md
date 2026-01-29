@@ -77,3 +77,7 @@ Both the `web-app` and `back_processor/mailing_system` require `.env` files for 
 
 ---
 *Created: January 13, 2026*
+
+
+### Issues in using google gen AI
+1. pip install --upgrade protobuf grpcio-tools langgraph-api for having similar working environment as in the documentation
