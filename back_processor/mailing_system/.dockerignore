@@ -1,0 +1,7 @@
+__pycache__
+venv
+.env
+.git
+.gitignore
+error.log
+faiss_store
