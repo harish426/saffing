@@ -90,6 +90,56 @@ class mail:
             print(f"Failed to send email with PDF: {e}")
             return False
 
+    def send_email_with_attachment_buffer(self, to_email: str, subject: str, body: str, file_buffer, filename: str) -> bool:
+        """
+        Sends an email with an attachment from a memory buffer.
+        """
+        if not all([self.smtp_server, self.smtp_port, self.smtp_username, self.smtp_password]):
+            print("Error: SMTP credentials are incomplete in environment variables.")
+            return False
+
+        try:
+            msg = MIMEMultipart()
+            msg['From'] = self.smtp_username
+            msg['To'] = to_email
+            msg['Subject'] = subject
+
+            msg.attach(MIMEText(body, 'plain'))
+
+            # Attach from buffer
+            if file_buffer:
+                # Determine content type based on extension, defaulting to application/octet-stream
+                import mimetypes
+                ctype, encoding = mimetypes.guess_type(filename)
+                if ctype is None or encoding is not None:
+                    # No guess could be made, or the file is encoded (compressed), so
+                    # use a generic bag-of-bits type.
+                    ctype = 'application/octet-stream'
+                
+                maintype, subtype = ctype.split('/', 1)
+                
+                attach = MIMEApplication(file_buffer.read(), _subtype=subtype)
+                attach.add_header('Content-Disposition', 'attachment', filename=filename)
+                msg.attach(attach)
+            else:
+                 print(f"Error: File buffer is empty")
+                 return False
+
+            port = int(self.smtp_port)
+            server = smtplib.SMTP(self.smtp_server, port)
+            server.starttls()
+            server.login(self.smtp_username, self.smtp_password)
+            
+            text = msg.as_string()
+            server.sendmail(self.smtp_username, to_email, text)
+            server.quit()
+            
+            print(f"Email with attachment ({filename}) sent successfully to {to_email}")
+            return True
+        except Exception as e:
+            print(f"Failed to send email with attachment: {e}")
+            return False
+
 
 
     def send_linkedin_comment(self, to_email: str, subject: str, body: str) -> bool:

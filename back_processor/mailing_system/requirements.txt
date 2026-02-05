@@ -9,3 +9,5 @@ tf-keras
 openAI
 google-genai
 
+
+python-docx

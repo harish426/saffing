@@ -137,12 +137,15 @@ async def send_resume(request:Request):
                     relevant_context = vector_store.search(search_query, k=3)
                     
                     # Use the new initial email generation method
-                    generated_body = ai_service.generate_initial_email_body(vendorName, jobRole, jobDescription, relevant_context)
+                    generated_body, jd_summary, job_requirements = ai_service.generate_initial_email_body(vendorName, jobRole, jobDescription, relevant_context)
                     
                     if "Error" in generated_body: # Check if ai_service returned an error string
                          raise Exception(generated_body)
 
                     body = generated_body
+                    # You can use jd_summary and job_requirements here if needed in the future
+                    print(f"JD Summary: {jd_summary}")
+                    print(f"Job Requirements: {job_requirements}")
                     break # Success
                 
                 except Exception as ai_error:
@@ -162,12 +165,28 @@ async def send_resume(request:Request):
                 print(f"Body Preview: {body[:100]}...")
                 print("--------------------------------------------------")
 
-                email_sent = mail().send_email_with_pdf(vendorEmail, subject, body, "D:/consultancy/docs/HARISH JAMALLAMUDI_Sr_ AI_engineer.docx")
+                # Generate Resume DOCX in-memory
+                from generate_resume_docx import generate_resume_buffer
+                import os
                 
-                if email_sent:
-                    return {"status": "success", "message": "Email sent successfully"}
+                json_source = os.path.join(os.path.dirname(__file__), "resume", "resume.json")
+                resume_buffer = generate_resume_buffer(json_source, jobDescription, job_requirements)
+                
+                if resume_buffer:
+                    email_sent = mail().send_email_with_attachment_buffer(
+                        vendorEmail, 
+                        subject, 
+                        body, 
+                        resume_buffer, 
+                        filename="Harish_Jamallamudi_Sr_AI_Engineer.docx"
+                    )
+                
+                    if email_sent:
+                        return {"status": "success", "message": "Email sent successfully with tailored resume"}
+                    else:
+                        return {"status": "error", "message": "Failed to send email. Check server logs."}
                 else:
-                    return {"status": "error", "message": "Failed to send email. Check server logs."}
+                    return {"status": "error", "message": "Failed to generate resume buffer."}
             else:
                 print("Skipping email due to invalid body or error.")
                 return {"status": 404, "message": "Data saved but email not sent due to AI error"}
