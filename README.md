@@ -73,7 +73,13 @@ This repository contains the development code for a Staffing Solution, consistin
 ## Configuration
 
 **Environment Variables**:
-Both the `web-app` and `back_processor/mailing_system` require `.env` files for configuration (e.g., Database URLs, API keys). Ensure these are created based on requirements (not committed to git).
+Both the `web-app` and `back_processor/mailing_system` require `.env` files for configuration (e.g., Database URLs, API keys). 
+For frontend and backend, both combine require .env with Database_URL, and for back end require SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD,(can be found in application created in google, use chatGPT to create it, for SMTP_SERVER use smtp.gmail.com, SMTP_PORT use 587, SMTP_USERNAME use your email address, SMTP_PASSWORD use app password from google account) GEMINI_API_KEY(can be found in google ai studio, but if you are using mormal gemini instead of pro, you have to setup payment, and charges for token usage.)
+
+
+# GEMINI_API_KEY="AIzaSyBkdszygU23v6Guzf5eLwd4JAill-BV20k"
+GEMINI_API_KEY="AIzaSyAX9Cfya415gniHG4b49xtHBVlg2p4sYHY"
+Ensure these are created based on requirements (not committed to git).
 
 ---
 *Created: January 13, 2026*
