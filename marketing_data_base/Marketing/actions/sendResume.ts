@@ -8,6 +8,7 @@ export async function sendResume(jobData: {
 }) {
     try {
         const { vendorEmail, jobRole, jobDescription, vendorName } = jobData;
+        console.log("Server Action sendResume called with:", { vendorEmail, vendorName });
 
         // Basic validation
         if (!vendorEmail || !jobRole || !jobDescription || !vendorName) {
@@ -21,11 +22,13 @@ export async function sendResume(jobData: {
             vendorName: vendorName
         });
 
-        const response = await fetch(`http://127.0.0.1:8000/send_resume?${params.toString()}`, {
+        const url = `http://127.0.0.1:8001/send_resume?${params.toString()}`;
+        console.log("Fetching URL:", url);
+
+        const response = await fetch(url, {
             method: 'GET',
             cache: 'no-store'
         });
-
         if (response.status != 404) {
             const result = await response.json();
             return { success: true, data: result };

@@ -8,8 +8,12 @@ import pdfplumber
 import concurrent.futures
 
 class LocalFAISSStore:
-    def __init__(self, model_name='all-MiniLM-L6-v2', folder_path="faiss_store"):
+    def __init__(self, model_name='all-MiniLM-L6-v2', folder_path=None):
         self.model = SentenceTransformer(model_name)
+        if folder_path is None:
+             base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+             folder_path = os.path.join(base_dir, "data", "faiss_store")
+        
         self.folder_path = folder_path
         self.index_file = os.path.join(folder_path, "index.faiss")
         self.meta_file = os.path.join(folder_path, "metadata.pkl")

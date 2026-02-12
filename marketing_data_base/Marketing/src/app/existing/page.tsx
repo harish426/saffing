@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,6 +7,7 @@ import { getJobDescriptions } from "../../../actions/fetchJobs";
 import { deleteJob } from "../../../actions/deleteJob";
 import { toggleJobActive } from "../../../actions/toggleActive";
 import { sendResume } from "../../../actions/sendResume";
+import { updateJobProgress } from "../../../actions/updateJob";
 
 interface JobDescription {
     id: string;
@@ -19,6 +21,7 @@ interface JobDescription {
     location: string | null;
     submissionDetails: string | null;
     requirementSource: string | null;
+    progress: string;
     isActive: boolean;
     createdAt: Date;
 }
@@ -26,16 +29,17 @@ interface JobDescription {
 export default function ExistingDetailsPage() {
     const [jobs, setJobs] = useState<JobDescription[]>([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<'new' | 'progress'>('new');
     const [filters, setFilters] = useState({
         startDate: "",
         endDate: "",
         searchQuery: "",
         filterActive: false,
         filterPhone: false,
-        filterEmail: false, // New state for email filter
+        filterEmail: false,
     });
 
-    const [showFilters, setShowFilters] = useState(false); // Toggle for filter modal
+    const [showFilters, setShowFilters] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
@@ -45,7 +49,8 @@ export default function ExistingDetailsPage() {
             filters.searchQuery || undefined,
             filters.filterActive,
             filters.filterPhone,
-            filters.filterEmail
+            filters.filterEmail,
+            activeTab
         );
         if (result.success && result.data) {
             setJobs(result.data as any);
@@ -57,7 +62,7 @@ export default function ExistingDetailsPage() {
 
     useEffect(() => {
         fetchData();
-    }, [filters]);
+    }, [filters, activeTab]);
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -65,16 +70,12 @@ export default function ExistingDetailsPage() {
             ...filters,
             [name]: type === 'checkbox' ? checked : value
         });
-        // We will trigger fetch via useEffect dependencies
     };
-
-    // Trigger fetch when any filter changes is already handled by the useEffect dependent on [filters]
 
     const handleDelete = async (id: string) => {
         if (confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
             const result = await deleteJob(id);
             if (result.success) {
-                // Remove from local state immediately
                 setJobs(jobs.filter(job => job.id !== id));
             } else {
                 alert(result.message || 'Failed to delete');
@@ -84,15 +85,12 @@ export default function ExistingDetailsPage() {
 
     const handleToggle = async (id: string, currentStatus: boolean) => {
         const newStatus = !currentStatus;
-        // Optimistic update
         setJobs(jobs.map(job => job.id === id ? { ...job, isActive: newStatus } : job));
 
         const result = await toggleJobActive(id, newStatus);
         if (result.success) {
-            // Re-fetch to normalize sort order
             fetchData();
         } else {
-            // Revert on failure
             setJobs(jobs.map(job => job.id === id ? { ...job, isActive: currentStatus } : job));
             alert('Failed to update status');
         }
@@ -111,6 +109,38 @@ export default function ExistingDetailsPage() {
                 alert(`Email sent successfully! Status: ${result.data.status}`);
             } else {
                 alert(`Failed to send email. ${result.message}`);
+            }
+        }
+    };
+
+    const handleProgressChange = async (id: string, newProgress: string) => {
+        if (newProgress === 'Vendor Rejected') {
+            if (!confirm('Setting status to "Vendor Rejected" will DELETE this entry. Are you sure?')) {
+                return;
+            }
+        }
+
+        // Optimistic update
+        if (newProgress === 'Vendor Rejected') {
+            setJobs(jobs.filter(job => job.id !== id));
+        } else {
+            // If moving from None to something else, it should disappear from 'New' tab
+            if (activeTab === 'new' && newProgress !== 'None') {
+                setJobs(jobs.filter(job => job.id !== id));
+            } else {
+                setJobs(jobs.map(job => job.id === id ? { ...job, progress: newProgress } : job));
+            }
+        }
+
+        const result = await updateJobProgress(id, newProgress);
+
+        if (!result.success) {
+            alert(result.message || 'Failed to update progress');
+            fetchData(); // Revert
+        } else {
+            // If action was updated, maybe we need to refresh if logic was complex, but optimistic should hold
+            if (result.action === 'deleted') {
+                // already handled
             }
         }
     };
@@ -172,7 +202,6 @@ export default function ExistingDetailsPage() {
                                     onChange={handleFilterChange}
                                 />
                             </div>
-                            {/* Button hidden as effect runs on change, but could be added for explicit applying */}
                         </div>
                     </div>
 
@@ -222,7 +251,7 @@ export default function ExistingDetailsPage() {
                                 top: 'calc(100% + 0.5rem)',
                                 right: 0,
                                 zIndex: 50,
-                                backgroundColor: '#18181b', // Background color matching the theme
+                                backgroundColor: '#18181b',
                                 border: '1px solid #3f3f46',
                                 borderRadius: '12px',
                                 padding: '1.5rem',
@@ -329,6 +358,42 @@ export default function ExistingDetailsPage() {
                     </div>
                 </div>
 
+                {/* Tabs */}
+                <div style={{ display: 'flex', borderBottom: '1px solid #3f3f46', marginBottom: '2rem' }}>
+                    <button
+                        onClick={() => setActiveTab('new')}
+                        style={{
+                            padding: '0.75rem 1.5rem',
+                            background: 'none',
+                            border: 'none',
+                            borderBottom: activeTab === 'new' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: activeTab === 'new' ? '#fff' : '#a1a1aa',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        New Entries
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('progress')}
+                        style={{
+                            padding: '0.75rem 1.5rem',
+                            background: 'none',
+                            border: 'none',
+                            borderBottom: activeTab === 'progress' ? '2px solid #6366f1' : '2px solid transparent',
+                            color: activeTab === 'progress' ? '#fff' : '#a1a1aa',
+                            cursor: 'pointer',
+                            fontSize: '1rem',
+                            fontWeight: 500,
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        In Progress
+                    </button>
+                </div>
+
                 {/* Content Section */}
                 {loading ? (
                     <div style={{ textAlign: 'center', color: '#a1a1aa', marginTop: '4rem' }}>Loading entries...</div>
@@ -337,7 +402,7 @@ export default function ExistingDetailsPage() {
                 ) : (
                     <div style={{ display: 'grid', gap: '1.5rem' }}>
                         {jobs.map((job) => (
-                            <JobCard key={job.id} job={job} onDelete={handleDelete} onToggle={handleToggle} onSend={handleSend} />
+                            <JobCard key={job.id} job={job} onDelete={handleDelete} onToggle={handleToggle} onSend={handleSend} onProgressChange={handleProgressChange} />
                         ))}
                     </div>
                 )}
@@ -346,10 +411,19 @@ export default function ExistingDetailsPage() {
     );
 }
 
-function JobCard({ job, onDelete, onToggle, onSend }: { job: JobDescription, onDelete: (id: string) => void, onToggle: (id: string, status: boolean) => void, onSend: (job: JobDescription) => void }) {
+function JobCard({ job, onDelete, onToggle, onSend, onProgressChange }: { job: JobDescription, onDelete: (id: string) => void, onToggle: (id: string, status: boolean) => void, onSend: (job: JobDescription) => void, onProgressChange: (id: string, status: string) => void }) {
     const [expanded, setExpanded] = useState(false);
     const description = job.jobDescription || 'No description provided.';
     const isLong = description.length > 150;
+
+    const progressOptions = [
+        'None',
+        'RTR filed',
+        'Prime Vendor filed RTR',
+        'Interview in progress',
+        'Finally Approved',
+        'Vendor Rejected'
+    ];
 
     return (
         <div className={`card ${!job.isActive ? 'opacity-50' : ''}`} style={{ display: 'grid', gridTemplateColumns: 'min-content minmax(200px, 1fr) 2fr min-content', gap: '2rem', alignItems: 'start', transition: 'opacity 0.3s' }}>
@@ -425,6 +499,21 @@ function JobCard({ job, onDelete, onToggle, onSend }: { job: JobDescription, onD
                             <span style={{ color: '#a1a1aa' }}>Source:</span> {job.requirementSource}
                         </div>
                     )}
+
+                    <div style={{ marginTop: '1rem' }}>
+                        <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.75rem', marginBottom: '0.25rem' }}>Status</label>
+                        <select
+                            value={job.progress || 'None'}
+                            onChange={(e) => onProgressChange(job.id, e.target.value)}
+                            className="input"
+                            style={{ padding: '0.25rem', fontSize: '0.8rem', width: '100%', backgroundColor: '#27272a', borderColor: '#3f3f46' }}
+                        >
+                            {progressOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                    </div>
+
                 </div>
             </div>
 

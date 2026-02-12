@@ -1,10 +1,17 @@
+
 'use server'
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { verifySession } from '@/lib/auth'
 
 export async function saveJobDescription(formData: any) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return { success: false, message: 'Unauthorized' };
+        }
+
         const {
             company,
             jobRole,
@@ -19,15 +26,14 @@ export async function saveJobDescription(formData: any) {
             isActive,
         } = formData
 
-        // Basic validation relaxed
-        // if (!company || !jobRole || !jobDescription || !vendorName || !vendorContact || !vendorEmail) {
-        //     return { success: false, message: 'Missing required fields' }
-        // }
 
         if (formData.id) {
-            // Update existing entry
-            const newJob = await prisma.jobDescription.update({
-                where: { id: formData.id },
+            // Update existing entry - Ensure Ownership
+            const result = await prisma.jobDescription.updateMany({
+                where: {
+                    id: formData.id,
+                    userId: session.id
+                },
                 data: {
                     company,
                     jobRole,
@@ -43,15 +49,19 @@ export async function saveJobDescription(formData: any) {
                 },
             });
 
+            if (result.count === 0) {
+                return { success: false, message: 'Job not found or unauthorized' };
+            }
 
-
+            const newJob = await prisma.jobDescription.findUnique({ where: { id: formData.id } });
 
             revalidatePath('/');
             revalidatePath('/fillin');
             revalidatePath('/existing');
+
             return { success: true, data: newJob };
         } else {
-            // Create new entry
+            // Create new entry - Link to User
             const newJob = await prisma.jobDescription.create({
                 data: {
                     company,
@@ -65,15 +75,18 @@ export async function saveJobDescription(formData: any) {
                     submissionDetails,
                     requirementSource,
                     isActive: isActive ?? true,
+                    userId: session.id, // <--- Link to User
                 },
             });
+
             let emailResult = { status: 'unknown', message: '' };
+
             try {
                 const params = new URLSearchParams({
-                    vendorEmail: vendorEmail,
-                    jobRole: jobRole,
-                    jobDescription: jobDescription,
-                    vendorName: vendorName
+                    vendorEmail: vendorEmail || '',
+                    jobRole: jobRole || '',
+                    jobDescription: jobDescription || '',
+                    vendorName: vendorName || ''
                 });
                 const response = await fetch(`http://127.0.0.1:8000/send_resume?${params.toString()}`, {
                     method: 'GET',

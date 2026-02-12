@@ -1,6 +1,8 @@
+
 'use server'
 
 import prisma from '@/lib/prisma'
+import { verifySession } from '@/lib/auth'
 
 export async function getJobDescriptions(
     startDate?: string,
@@ -8,20 +10,28 @@ export async function getJobDescriptions(
     searchQuery?: string,
     filterActive?: boolean,
     filterPhone?: boolean,
-    filterEmail?: boolean
+    filterEmail?: boolean,
+    filterTab?: 'new' | 'progress'
 ) {
     try {
-        const where: any = {}
+        const session = await verifySession();
+        if (!session) {
+            return { success: false, message: 'Unauthorized' };
+        }
+
+        const where: any = {
+            userId: session.id
+        }
 
         if (startDate && endDate) {
-            // Range filter
             where.createdAt = {
+                ...where.createdAt,
                 gte: new Date(`${startDate}T00:00:00`),
                 lte: new Date(`${endDate}T23:59:59.999`),
             }
         } else if (startDate) {
-            // Single day filter (start date to end of that day)
             where.createdAt = {
+                ...where.createdAt,
                 gte: new Date(`${startDate}T00:00:00`),
                 lte: new Date(`${startDate}T23:59:59.999`),
             }
@@ -34,7 +44,6 @@ export async function getJobDescriptions(
             ]
         }
 
-        // Apply additional filters
         if (filterActive) {
             where.isActive = true;
         }
@@ -55,6 +64,11 @@ export async function getJobDescriptions(
             ];
         }
 
+        if (filterTab === 'new') {
+            where.progress = 'None';
+        } else if (filterTab === 'progress') {
+            where.progress = { not: 'None' };
+        }
 
         const jobs = await prisma.jobDescription.findMany({
             where,
@@ -64,18 +78,26 @@ export async function getJobDescriptions(
             ],
         })
 
-
         return { success: true, data: jobs }
     } catch (error) {
         console.error('Failed to fetch job descriptions:', error)
         return { success: false, message: 'Failed to fetch entries' }
     }
 }
-// Append new function
+
 export async function getJobById(id: string) {
     try {
-        const job = await prisma.jobDescription.findUnique({
-            where: { id },
+        const session = await verifySession();
+        if (!session) {
+            return { success: false, message: 'Unauthorized' };
+        }
+
+        // Use findFirst to enforce userId check since id is the only unique field
+        const job = await prisma.jobDescription.findFirst({
+            where: {
+                id,
+                userId: session.id
+            },
         });
 
         if (!job) {

@@ -10,6 +10,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  password    String
+  jobEmail    String?
+  appPassword String?
+  
+  sessions    Session[]
+  resumes     Resume[]
+  jobDescriptions JobDescription[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Resume {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  content   Bytes
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  createdAt DateTime @default(now())
+}
+
 model JobDescription {
   id             String   @id @default(cuid())
   company        String?
@@ -22,10 +58,15 @@ model JobDescription {
   careerLink     String?
   submissionDetails String?
   requirementSource String?
+  progress       String   @default("None") // None, RTR filed, etc.
   isActive       Boolean  @default(true)
+
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String?
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-}
 
+  @@index([userId])
+}
 
