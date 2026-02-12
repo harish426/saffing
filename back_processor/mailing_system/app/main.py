@@ -1,13 +1,13 @@
 from fastapi import FastAPI, BackgroundTasks
 import time
-from database import engine, SessionLocal
+from app.core.database import engine, SessionLocal
 from sqlalchemy import text
 from pydantic import BaseModel
-from read_data import read_data
+from app.utils.read_data import read_data
 # from ai_services import get_Ai_Subject
-from email_services import mail
-from ai_services import GeminiService
-from vectorestore import LocalFAISSStore
+from app.services.email_services import mail
+from app.services.ai_services import GeminiService
+from app.utils.vectorestore import LocalFAISSStore
 import concurrent.futures
 from fastapi import Request
 
@@ -166,10 +166,11 @@ async def send_resume(request:Request):
                 print("--------------------------------------------------")
 
                 # Generate Resume DOCX in-memory
-                from generate_resume_docx import generate_resume_buffer
+                from app.services.generate_resume_docx import generate_resume_buffer
                 import os
                 
-                json_source = os.path.join(os.path.dirname(__file__), "resume", "resume.json")
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                json_source = os.path.join(base_dir, "data", "resume", "resume.json")
                 resume_buffer = generate_resume_buffer(json_source, jobDescription, job_requirements)
                 
                 if resume_buffer:

@@ -6,6 +6,7 @@ import time
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import List
+from app.utils.tools import Tools
 
 load_dotenv()
 
@@ -44,22 +45,38 @@ class GeminiService:
         
         Task:
         Draft a concise, professional, and persuasive cold email body to the hiring manager/recruiter. 
-        - Highlight the candidate's experience relevant to the job description based on the resume context provided.
-        - Keep it under 100 words.
+        - STRICTLY limit the body to exactly 3 sentences.
+        - Analyze the "Candidate's Resume Context" and "Job Description" to create a high-impact message.
         - Do not include the subject line in the output.
+        - ABSOLUTELY NO HTML TAGS or <br>. Use actual newlines (\n) for line breaks.
+        - Separated sentences with a single newline.
         - Do not include placeholders like "[Your Name]". The candidate's name is Harish Jamallamudi.
-        - Sign off as:
+        - Sign off exactly as follows (preceded by 2 newlines):
         
         Best regards,
         Harish Jamallamudi
+        +13146696026
+        harishjamalladi@gmail.com
         """
 
         # try:
+        tools = [Tools.get_todays_date, Tools.calculate_experience, Tools.get_linkedin_profile, Tools.get_current_location]
         response = self.client.models.generate_content(
             model="gemini-flash-latest", 
-            contents=prompt
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=tools
+            )
         )
-        return response.text
+        text_response = response.text
+        # Post-processing to ensure plain text
+        if text_response:
+             text_response = text_response.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
+        
+        # Ensure sign-off separation
+        if text_response and "Best regards," in text_response and "\n\nBest regards," not in text_response:
+             text_response = text_response.replace("Best regards,", "\n\nBest regards,")
+        return text_response if text_response else ""
         # except Exception as e:
         #     print(f"Error generating content with Gemini: {e}")
         #     raise e # Re-raise for main.py to handle
@@ -92,17 +109,21 @@ class GeminiService:
         2. Generate three things based on the following rules:
             a. **job_description_summary**: A concise summary of the job description (max 3 sentences).
             b. **job_requirements**: A list of STRICTLY technical skills, programming languages, databases, frameworks, and tools extracted from the JD (e.g., Python, SQL, PowerBI, AWS, React). Do NOT include soft skills, years of experience, or general duties.
-            c. **email_body**: A cold email body to the vendor ({vendor_name}) following these rules:
+            
+            c. **email_body**: A cold email body to the vendor, which greet the vendor first (eg: Hi {vendor_name}, if his name is available following these rules:
+                - act behalf of Harish Jamallamudi and send this email to the vendor,not like a chatbot or a third person.
+                - STRICTLY limit the body to exactly 3 sentences.
                 - If the JD matches AI/ML/Data Science, write a persuasive pitch highlighting relevant experience.
                 - If the JD does NOT match well, politely request consideration for AI/ML/Data Science roles.
                 - If the JD is Data Engineering, explain the profile as a Data Engineer.
-                - Keep it under 200 words.
+                - ABSOLUTELY NO HTML TAGS or <br>. Use actual newlines (\n) for line breaks.
+                - Separated each sentence with a new line (\n).
                 - No subject line in the body.
                 - No placeholders.
-                - Sign off as:
-                    Best regards,
-                    Harish Jamallamudi
-                    +13146696026
+                - Sign off exactly as follows (preceded by 2 newlines):
+                    Best regards,\n
+                    Harish Jamallamudi\n
+                    +13146696026\n
                     harishjamalladi@gmail.com
         """
 
@@ -117,6 +138,7 @@ class GeminiService:
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         response_schema=InitialEmailResponse
+                        # tools=tools
                     )
                 )
                 
@@ -124,19 +146,25 @@ class GeminiService:
                 data = response.parsed
                 
                 if not data:
-                    # Fallback if parsed isn't populated for some reason (rare with schema)
+                    # Fallback if parsed isn't populated (rare with schema)
                     import json
                     json_data = json.loads(response.text)
-                    return (
-                        json_data.get("email_body", ""),
-                        json_data.get("job_description_summary", ""),
-                        json_data.get("job_requirements", [])
-                    )
+                    email_body = json_data.get("email_body", "")
+                else:
+                    email_body = data.email_body
+                print(email_body)
+                # Post-processing cleanup
+                email_body = email_body.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
+                if "Best regards," in email_body:
+                    # Ensure double newline before sign-off
+                    parts = email_body.partition("Best regards,")
+                    if not parts[0].endswith("\n"):
+                         email_body = parts[0].strip() + "\n\n" + "Best regards," + parts[2]
 
                 return (
-                    data.email_body,
-                    data.job_description_summary,
-                    data.job_requirements
+                    email_body,
+                    data.job_description_summary if data else json_data.get("job_description_summary", ""),
+                    data.job_requirements if data else json_data.get("job_requirements", [])
                 )
 
             except Exception as e:
@@ -185,7 +213,7 @@ class GeminiService:
         Returns a list of bullet points.
         """
         if not self.api_key:
-            return ["Error: Gemini API key not configured."]
+            return current_content
 
         
         prompt = f"""
@@ -247,9 +275,9 @@ class GeminiService:
                         time.sleep(retry_delay)
                         retry_delay *= 2 # Exponential backoff
                         continue
-                return [f"Error: {e}"]
+                return current_content
         
-        return ["Error: Max retries exceeded."]
+        return current_content
 
     def tailor_technical_skills(self, current_skills: dict, job_requirements: list[str]) -> dict:
         """
@@ -257,7 +285,7 @@ class GeminiService:
         Returns the updated dictionary.
         """
         if not self.api_key:
-            return {"Error": "Gemini API key not configured."}
+            return current_skills
 
         prompt = f"""
         You are an expert technical resume writer. Your task is to intelligently merge a list of "Job Requirements" into an existing "Current Skills" dictionary.

@@ -5,8 +5,7 @@ from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
-from ai_services import GeminiService
-
+from app.services.ai_services import GeminiService
 
 
 
@@ -45,6 +44,7 @@ class Resume:
         run.font.underline = True # Underline only the text
         p.paragraph_format.space_after = Pt(6)
         p.paragraph_format.space_before = Pt(12)
+        p.paragraph_format.keep_with_next = True
 
     def add_personal_info(self):
         info = self.data.get("personal_info", {})
@@ -81,13 +81,24 @@ class Resume:
             p = self.doc.add_paragraph(overview)
             p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             p.paragraph_format.space_after = Pt(8)
+            # Glue overview to the first highlight if highlights exist
+            if summary.get("key_highlights", []):
+                p.paragraph_format.keep_with_next = True
 
         highlights = summary.get("key_highlights", [])
         if highlights:
-            highlights = self.ai.generate_tailored_resume_content(highlights, job_description)
-            for item in highlights:
+            try:    
+                highlights = self.ai.generate_tailored_resume_content(highlights, job_description)
+            except Exception as e:
+                print(e)
+                highlights= summary.get("key_highlights",[])
+            for i, item in enumerate(highlights):
                 p = self.doc.add_paragraph(item, style='List Bullet')
                 p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                # Glue the first bullet to the next paragraph to ensure Heading + Bullet 1 + Bullet 2 stay together
+                if i == 0 and len(highlights) > 1:
+                     p.paragraph_format.keep_with_next = True
+            
 
     def add_education(self):
         edu = self.data.get("education", {})
@@ -105,7 +116,12 @@ class Resume:
     def add_skills(self, requirements):
         tech = self.data.get("technologies", {})
         if tech:
-            tech = self.ai.tailor_technical_skills(tech, requirements)
+            try:
+                tech = self.ai.tailor_technical_skills(tech, requirements)
+            except Exception as e:
+                tech = self.data.get("technologies", {})
+
+
             self.add_section_heading("Technical Skills")
             
             table = self.doc.add_table(rows=0, cols=2)
@@ -141,6 +157,7 @@ class Resume:
         
         run_client = p_header.add_run(client)
         self.set_font(run_client, bold=True, size=11)
+        p_header.paragraph_format.keep_with_next = True
         
         if location:
             run_loc = p_header.add_run(f", {location}")
@@ -149,6 +166,7 @@ class Resume:
         # Line 2: Role (Left) ... Duration (Right)
         p_sub = self.doc.add_paragraph()
         p_sub.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        p_sub.paragraph_format.keep_with_next = True
         
         # Calculate usable width: 8.5 (Letter) - 0.75 (Left) - 0.5 (Right) = 7.25 inches
         tab_stops = p_sub.paragraph_format.tab_stops
@@ -182,7 +200,11 @@ class Resume:
             
             # First 2 experiences
             for job in experience[:2]:
-                job["responsibilities"] = self.ai.generate_tailored_resume_content(job["responsibilities"], job_description)
+                try:
+                    job_resposibilities = self.ai.generate_tailored_resume_content(job["responsibilities"], job_description)
+                except Exception as e:
+                    job_resposibilities = job["responsibilities"]
+                job["responsibilities"]=job_resposibilities
                 self._add_job_entry(job)
 
     def add_experience_part_two(self):
@@ -237,8 +259,9 @@ def generate_resume_buffer(json_path, job_description, requirements):
     return buffer
 
 if __name__ == "__main__":
-    json_source = os.path.join(os.path.dirname(__file__), "resume", "resume.json")
-    output_tgt = os.path.join(os.path.dirname(__file__), "Harish_Jamallamudi_Resume_Layout_v17.docx")
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    json_source = os.path.join(base_dir, "data", "resume", "resume.json")
+    output_tgt = os.path.join(base_dir, "Harish_Jamallamudi_Resume_Layout_v17.docx")
     
     sample_jd = """
     Looking for a GenAI Engineer with experience in RAG, Vector Databases (FAISS/Chroma), and LLM orchestration (LangChain). 

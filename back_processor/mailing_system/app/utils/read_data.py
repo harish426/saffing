@@ -1,5 +1,5 @@
-from database import SessionLocal
-from models import JobDescription
+from app.core.database import SessionLocal
+from app.models.models import JobDescription
 
 
 

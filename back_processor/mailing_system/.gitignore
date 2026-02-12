@@ -7,3 +7,4 @@ faiss_store
 .env
 **/.env
 **/*.env
+./resume

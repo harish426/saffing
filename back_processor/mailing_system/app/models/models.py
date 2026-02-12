@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Boolean, DateTime, func, LargeBinary, Integer
-from database import Base
+from app.core.database import Base
 
 class JobDescription(Base):
     __tablename__ = "JobDescription"
