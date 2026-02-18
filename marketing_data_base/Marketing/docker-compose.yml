@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: marketing_frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - HOSTNAME=0.0.0.0
+    restart: always
+
+# If you want to run a postgres database container alongside:
+#   db_frontend:
+#     image: postgres:15-alpine
+#     container_name: marketing_db
+#     environment:
+#       POSTGRES_USER: myuser
+#       POSTGRES_PASSWORD: mypassword
+#       POSTGRES_DB: marketing_db
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - pgdata_frontend:/var/lib/postgresql/data
+
+# volumes:
+#   pgdata_frontend:

@@ -1,4 +1,6 @@
-'use server'
+'use server';
+
+import { verifySession } from '../src/lib/auth';
 
 export async function sendResume(jobData: {
     vendorEmail: string | null;
@@ -7,8 +9,13 @@ export async function sendResume(jobData: {
     vendorName: string | null;
 }) {
     try {
+        const session = await verifySession();
+        if (!session) {
+            return { success: false, message: 'Unauthorized: Please log in' };
+        }
+
         const { vendorEmail, jobRole, jobDescription, vendorName } = jobData;
-        console.log("Server Action sendResume called with:", { vendorEmail, vendorName });
+        console.log("Server Action sendResume called with:", { vendorEmail, vendorName, userId: session.id });
 
         // Basic validation
         if (!vendorEmail || !jobRole || !jobDescription || !vendorName) {
@@ -16,6 +23,7 @@ export async function sendResume(jobData: {
         }
 
         const params = new URLSearchParams({
+            user_id: session.id,
             vendorEmail: vendorEmail,
             jobRole: jobRole,
             jobDescription: jobDescription,

@@ -10,6 +10,12 @@ from app.services.ai_services import GeminiService
 from app.utils.vectorestore import LocalFAISSStore
 import concurrent.futures
 from fastapi import Request
+from app.models.models import User
+import logging
+from app.core.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger(__name__)
 
 # Initialize services
 ai_service = GeminiService()
@@ -17,14 +23,68 @@ vector_store = LocalFAISSStore()
 
 app = FastAPI()
 
+# Initialize Resume Analyzer
+from app.services.resume_analysor import ResumeAnalysor
+from app.utils.resume_parser import extract_text_from_bytes
+from app.utils.resume_parser import extract_text_from_bytes
+from app.models.models import Resume
+from app.core.database import get_latest_resume
+
+resume_analyzer = ResumeAnalysor()
+
+@app.post("/convert_resume_to_json")
+async def convert_resume_to_json(request: Request):
+    """
+    Converts a resume (PDF/DOCX) stored in the database to a structured JSON format.
+    Expects 'resume_id' in query params.
+    """
+    resume_id = request.query_params.get("resume_id")
+    if not resume_id:
+        return {"error": "resume_id is required"}
+
+    try:
+        # Fetch resume from DB
+        with SessionLocal() as db:
+            resume = db.query(Resume).filter(Resume.id == resume_id).first()
+            
+            if not resume:
+                return {"error": "Resume not found"}
+            
+            if not resume.content:
+                 return {"error": "Resume content is empty"}
+
+            # Extract Text
+            text_content = extract_text_from_bytes(resume.content, resume.filename or "resume.pdf")
+            
+            if not text_content:
+                return {"error": "Failed to extract text from resume"}
+
+            # Analyze with Gemini
+            json_data = resume_analyzer.parse_resume_to_json(text_content)
+            
+            # Save to Database
+            resume.resumeData = json_data
+            db.commit()
+            db.refresh(resume)
+
+            return {"status": "success", "data": json_data}
+
+    except Exception as e:
+        logger.error(f"Error in convert_resume_to_json: {e}", exc_info=True)
+        return {"status": "error", "message": str(e)}
+
 class EmailRequest(BaseModel):
     to_email: str
     subject: str
     body: str
 
 @app.post("/test-email")
-def test_email(email_request: EmailRequest):
-    success = send_email(email_request.to_email, email_request.subject, email_request.body)
+def test_email(email_request: EmailRequest, user_id: str = None):
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.id == user_id).first() if user_id else None
+        
+    success = mail(user).send_email(email_request.to_email, email_request.subject, email_request.body)
+    
     if success:
         return {"status": "success", "message": "Email sent successfully"}
     else:
@@ -46,7 +106,7 @@ def test_db():
 
 @app.get("/send-remark")
 async def process_and_send_emails():
-    print("Background Task Started: Processing Emails...")
+    logger.info("Background Task Started: Processing Emails...")
     application_details=read_data().get_active_jobs_with_vendor_emails()
     try:
         for application in application_details:
@@ -60,7 +120,7 @@ async def process_and_send_emails():
                     
                     for attempt in range(MAX_RETRIES):
                         try:
-                            print(f"Generating AI email for {application.jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
+                            logger.info(f"Generating AI email for {application.jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
                             relevant_context = vector_store.search(application.jobDescription, k=3)
                             generated_body = ai_service.generate_email_body(application.jobRole, application.jobDescription, relevant_context)
                             
@@ -70,13 +130,13 @@ async def process_and_send_emails():
                             body = generated_body
                             break # Success, exit loop
                         except Exception as ai_error:
-                            print(f"AI Generation failed: {ai_error}")
+                            logger.error(f"AI Generation failed: {ai_error}", exc_info=True)
                             
                             if attempt < MAX_RETRIES - 1:
                                 print(f"Retrying in {RETRY_DELAY} seconds...")
                                 time.sleep(RETRY_DELAY)
                             else:
-                                print("Max retries reached. Aborting email send.")
+                                logger.warning("Max retries reached. Aborting email send.")
                                 body = None
                                 break
 
@@ -85,22 +145,24 @@ async def process_and_send_emails():
                     body=f"Dear {application.vendorName},\n\nI hope you are doing well.\\\n\nI wanted to follow up on my email sent yesterday regarding the {application.jobRole.split('/')[0]} opportunity. I’m very enthusiastic about this role and the possibility of contributing my experience in big data analytics, machine learning, and cloud-based solutions to your team.\n\nI understand you may be reviewing many applications, but I would greatly appreciate the opportunity to discuss how my background and skills align with your needs. Please let me know if there is any additional information I can provide.\n\nThank you again for your time and consideration. I look forward to hearing from you.\n\nBest regards,\nHarish Jamallamudi"
 
                 if body:
-                    print("--------------------------------------------------")
-                    print(f"To: {application.vendorEmail}")
-                    print(f"Subject: {subject}")
-                    print(f"Body Preview: {body[:100]}...")
-                    # print("Body:", body) # Uncomment to see full body
-                    print("--------------------------------------------------")
+                    logger.info("Sending email", extra={
+                        "to": application.vendorEmail,
+                        "subject": subject,
+                        "body_preview": body[:100]
+                    })
                   
-                    mail().send_email(application.vendorEmail, subject, body)
+                    if application.user:
+                        mail(application.user).send_email(application.vendorEmail, subject, body)
+                    else:
+                        logger.warning(f"Skipping email to {application.vendorEmail} because no user is associated with this job.")
                     # print(f"Sent email to {application.vendorEmail}")
                     
-                    print("Waiting 5 seconds before next request...")
+                    logger.info("Waiting 5 seconds before next request...")
                     time.sleep(10)
                 else:
-                    print(f"Skipping email to {application.vendorEmail} due to AI error.")
+                    logger.warning(f"Skipping email to {application.vendorEmail} due to AI error.")
     except Exception as e:
-        print(f"Error in background task: {e}")
+        logger.error(f"Error in background task: {e}", exc_info=True)
 
 @app.get("/send-remark")
 def send_remark(background_tasks: BackgroundTasks):
@@ -111,14 +173,23 @@ def send_remark(background_tasks: BackgroundTasks):
 
 @app.get("/send_resume")
 async def send_resume(request:Request):
+    user_id = request.query_params.get("user_id")
+    current_user = None
+    if user_id:
+        with SessionLocal() as db:
+            current_user = db.query(User).filter(User.id == user_id).first()
+    if not current_user:
+        return {"status": "error", "message": "User not found or user_id missing"}
+    
     # to_email=request.query_params.get("to_email")
     # role=request.query_params.get("role")
+    user_name=current_user.name
     jobRole=request.query_params.get("jobRole")
     jobDescription=request.query_params.get("jobDescription")
     vendorName=request.query_params.get("vendorName")
     vendorEmail=request.query_params.get("vendorEmail")
     
-    print("Background Task Started: Processing Email for", vendorEmail)
+    logger.info(f"Background Task Started: Processing Email for {vendorEmail}")
 
     try:
         if vendorEmail:
@@ -131,7 +202,7 @@ async def send_resume(request:Request):
 
             for attempt in range(MAX_RETRIES):
                 try:
-                    print(f"Generating AI email for {jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
+                    logger.info(f"Generating AI email for {jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
                     # Fallback to jobRole if jobDescription is missing
                     search_query = jobDescription if jobDescription else jobRole
                     relevant_context = vector_store.search(search_query, k=3)
@@ -144,42 +215,55 @@ async def send_resume(request:Request):
 
                     body = generated_body
                     # You can use jd_summary and job_requirements here if needed in the future
-                    print(f"JD Summary: {jd_summary}")
-                    print(f"Job Requirements: {job_requirements}")
+                    logger.info(f"JD Summary: {jd_summary}")
+                    logger.info(f"Job Requirements: {job_requirements}")
                     break # Success
                 
                 except Exception as ai_error:
-                    print(f"AI Generation failed: {ai_error}")
+                    logger.error(f"AI Generation failed: {ai_error}", exc_info=True)
                     
                     if attempt < MAX_RETRIES - 1:
-                        print(f"Retrying in {RETRY_DELAY} seconds...")
+                        logger.info(f"Retrying in {RETRY_DELAY} seconds...")
                         time.sleep(RETRY_DELAY)
                     else:
-                        print("Max retries reached. Aborting email send.")
+                        logger.warning("Max retries reached. Aborting email send.")
                         return {"status": "partial_success", "message": "Data saved but email not sent due to AI error"}
 
             if body and "Error" not in body:
-                print("--------------------------------------------------")
-                print(f"To: {vendorEmail}")
-                print(f"Subject: {subject}")
-                print(f"Body Preview: {body[:100]}...")
-                print("--------------------------------------------------")
+                logger.info("Sending email", extra={
+                    "to": vendorEmail,
+                    "subject": subject,
+                    "body_preview": body[:100]
+                })
 
                 # Generate Resume DOCX in-memory
                 from app.services.generate_resume_docx import generate_resume_buffer
-                import os
+                # import os
                 
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                json_source = os.path.join(base_dir, "data", "resume", "resume.json")
-                resume_buffer = generate_resume_buffer(json_source, jobDescription, job_requirements)
+                # base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                # json_source = os.path.join(base_dir, "data", "resume", "resume.json")
+                from app.core.database import get_latest_resume, get_latest_resume_for_user
+
+                #gets the resume data from the database
+                with SessionLocal() as db:
+                    # resume_entry = get_latest_resume(db)
+                    resume_entry = get_latest_resume_for_user(db, current_user.id)
+                    
+                    if not resume_entry or not resume_entry.resumeData:
+                        logger.error(f"Error: No resume data found in database for user {current_user.id}.")
+                        return {"status": "error", "message": "No resume data found in database."}
+                        
+                    resume_data = resume_entry.resumeData
+
+                resume_buffer = generate_resume_buffer(resume_data, jobDescription, job_requirements)
                 
                 if resume_buffer:
-                    email_sent = mail().send_email_with_attachment_buffer(
+                    email_sent = mail(current_user).send_email_with_attachment_buffer(
                         vendorEmail, 
                         subject, 
                         body, 
                         resume_buffer, 
-                        filename="Harish_Jamallamudi_Sr_AI_Engineer.docx"
+                        filename=f"{user_name}_resume.docx"
                     )
                 
                     if email_sent:
@@ -189,18 +273,18 @@ async def send_resume(request:Request):
                 else:
                     return {"status": "error", "message": "Failed to generate resume buffer."}
             else:
-                print("Skipping email due to invalid body or error.")
+                logger.warning("Skipping email due to invalid body or error.")
                 return {"status": 404, "message": "Data saved but email not sent due to AI error"}
 
     except Exception as e:
-        print(f"Error in send_resume: {e}")
+        logger.error(f"Error in send_resume: {e}", exc_info=True)
         return {"status": 404, "message": str(e)}
 
 @app.get("/groupby_vendor")
 async def groupby_vendor(request: Request):
     body = await request.json()
     if body.get("vendor") and body.get("month"):
-        print("Grouping by vendor", body)
+        logger.info(f"Grouping by vendor {body}")
         return {"received": body}
     else:
         return {"error": "Missing vendor or month"}

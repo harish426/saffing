@@ -1,297 +1,269 @@
 {
-    "personal_info": {
-        "name": "HARISH JAMALLAMUDI",
-        "title": "Sr. Data Scientist/ AI Engineer",
-        "email": "harishjamalladi@gmail.com",
-        "phone": "314-669-6026"
-    },
-    "professional_summary": {
-        "overview": "Senior Data Scientist with 11+ years of experience, including 8 years in Data Science and 3 years in Data Engineering, specializing in designing and deploying AI-driven solutions. Proven expertise in Machine Learning, Deep Learning, NLP, and predictive analytics, with hands-on experience in MLOps, model operationalization, and real-time anomaly detection. Adept at building scalable end-to-end ML pipelines, optimizing forecasting systems, and delivering innovation-led business insights that drive measurable outcomes.",
-        "key_highlights": [
-            "Highly proficient in Python programming, specializing in writing clean, optimized, and well-documented code for production-grade applications.",
-            "Extensive experience using Python for machine learning, data engineering, data analysis, and intelligent automation use cases.",
-            "Expertise applying advanced ML, AI, and data engineering techniques to build innovative data-driven solutions that significantly improve efficiency, accuracy, and decision-making.",
-            "Hands-on experience in predictive modeling and regression techniques to extract actionable business insights.",
-            "Strong ability in data mining, exploratory data analysis (EDA), and advanced statistical interpretation to solve complex business challenges.",
-            "Skilled across a wide spectrum of machine learning frameworks, algorithms, and deployment methodologies, ensuring adaptability across domains and architectures.",
-            "Designed and optimized real-time anomaly detection systems, improving data quality and enabling early risk identification.",
-            "Built and automated end-to-end forecasting pipelines, accelerating demand prediction and operational planning.",
-            "Applied Proximal Policy Optimization (PPO) for dynamic reorder optimization, driving substantial reductions in inventory holding costs.",
-            "Improved forecasting accuracy by leveraging transfer learning and pre-trained Transformer models integrated with LSTM architectures on time-series data.",
-            "Enthusiastic about Generative AI and OpenAI ecosystem, with hands-on exposure to GPT, LLaMA, prompt engineering, and fine-tuning techniques.",
-            "Knowledgeable in Retrieval-Augmented Generation (RAG) to enhance LLM responses using external knowledge sources.",
-            "Familiar with LoRA-based efficient fine-tuning techniques for optimizing LLM performance with minimal computational overhead.",
-            "Utilized AutoML for streamlined model selection and hyperparameter tuning, saving valuable optimization time.",
-            "Contributed to the development of advanced recommender systems, combining collaborative filtering and content-based features.",
-            "Applied multi-agent Deep Q-Learning strategies for optimizing pricing decisions, resulting in a noticeable revenue increase.",
-            "Managed cloud infrastructure as code using Terraform, showcasing proficiency in Infrastructure as Code (IaC) practices.",
-            "Extensive experience with serverless deployment on cloud platforms, ensuring high scalability and cost-efficiency.",
-            "Led the integration of Natural Language Processing for real-time reaction to competitor price changes, showcasing agility in adapting to market dynamics.",
-            "Applied advanced statistical analyses, A/B testing, and clustering techniques to uncover insights and drive informed decision-making.",
-            "Developed executive-level visualizations for effective reporting and contributed to the production of recommendation engines.",
-            "Demonstrated proficiency in Git version control, ensuring efficient collaboration and code management.",
-            "Successfully adopted new data technologies, including Apache Spark, showcasing adaptability to emerging industry standards.",
-            "Managed cloud infrastructure across AWS, demonstrating a broad understanding of services offered by both platforms including but not limited to EC2, Lambda, Elastic Beanstalk, ECR, ECS, EKS, S3, RDS, VPC/Subnets, CloudFront, Route53, API Gateway, SageMaker suite, Redshift, Kinesis, CloudWatch, CloudFormation, CloudTrail etc.",
-            "Leveraged Image Processing techniques for object recognition using Deep Learning techniques.",
-            "Query optimization, execution plan and Performance tuning of queries for better performance in SQL.",
-            "Worked on Shiny and R application showcasing machine learning for improving the forecast of business.",
-            "Hands on experience with version control systems like GIT, Git hub."
-        ]
-    },
-    "education": {
-        "degree": "Masters in Computer Science",
-        "institution": "Saint Louis University",
-        "location": "USA"
-    },
-    "technologies": {
-        "languages": [
-            "Python",
-            "R",
-            "Java",
-            "C++",
-            "SQL"
-        ],
-        "python_libraries_frameworks": [
-            "NumPy",
-            "SciPy",
-            "NLTK",
-            "Pandas",
-            "Scikit-learn",
-            "Matplotlib",
-            "Seaborn",
-            "TensorFlow",
-            "Keras",
-            "Transformers"
-        ],
-        "machine_learning_algorithms": [
-            "LDA",
-            "BERT",
-            "GPT",
-            "Gemini AI",
-            "Transformer Models",
-            "SVM",
-            "XGBoost",
-            "LightGBM",
-            "RNN",
-            "CNN",
-            "Random Forest",
-            "K-Means",
-            "Linear Regression",
-            "Ridge Regression",
-            "k-Nearest Neighbors (k-NN)",
-            "Non-Negative Matrix Factorization (NMF)",
-            "Gaussian Processes",
-            "Naive Bayes",
-            "Logistic Regression",
-            "K-means clustering"
-        ],
-        "cloud_computing_platforms": [
-            "Amazon Web Services (AWS)",
-            "AZURE"
-        ],
-        "web_technologies": [
-            "HTML5",
-            "JavaScript",
-            "CSS3",
-            "Bootstrap"
-        ],
-        "databases": [
-            "SQLServer",
-            "MySQL",
-            "PostgreSQL",
-            "MariaDB",
-            "MongoDB",
-            "Firebase"
-        ],
-        "big_data_technologies": [
-            "MapReduce",
-            "Hadoop",
-            "HDFS",
-            "Spark"
-        ],
-        "reporting_tools": [
-            "MS Office",
-            "JIRA",
-            "Confluence",
-            "Trello",
-            "Notion"
-        ],
-        "version_control": [
-            "Git"
-        ],
-        "operating_systems": [
-            "macOS",
-            "Windows"
-        ],
-        "automation_tools": [
-            "Terraform",
-            "Serverless",
-            "AWS CloudFormation"
-        ],
-        "collaboration_tools": [
-            "Slack",
-            "Microsoft Teams"
-        ],
-        "database_orm": [
-            "SQLAlchemy"
-        ],
-        "testing_frameworks": [
-            "unittest",
-            "pytest"
-        ],
-        "web_frameworks": [
-            "Flask",
-            "FastAPI"
-        ],
-        "text_processing": [
-            "NLTK",
-            "SpaCy"
-        ]
-    },
-    "professional_experience": [
-        {
-            "client": "Charter Communications",
-            "location": "St. Louis, MO",
-            "role": "GenAI/AI Engineer",
-            "duration": "Jan 2025 - Present",
-            "responsibilities": [
-                "Designed and implemented enterprise-grade Retrieval-Augmented Generation (RAG) architectures using LangChain and Vertex AI, enabling real-time retrieval of internal knowledgebases, customer history, and operational documentation to support live customer support agents.",
-                "Built domain-specific embedding pipelines and vector retrieval layers using FAISS, Pinecone, and Weaviate, enabling low-latency semantic search across internal policies, troubleshooting guides, call transcripts, and historical service data.",
-                "Customized and optimized open-source LLMs (LLaMA2, Mistral) via the HuggingFace ecosystem, and integrated PaLM APIs, later embedding Google Gemini (Dec 2023) into internal AI workflows for multimodal reasoning, agent assistance, and automated call summarization.",
-                "Developed Agent Assist intelligence combining LLM reasoning with retrieval pipelines to surface context-aware recommendations and next-best actions for front-line agents during live customer interactions.",
-                "Implemented Summary AI pipelines leveraging transformer-based NLP models to automatically generate structured call summaries and searchable internal notes, reducing post-call documentation time and improving cross-agent handoffs.",
-                "Deployed high-throughput model serving infrastructures using BentoML and KServe, delivering concurrent, low-latency inference for LLM-powered agent tools across distributed EKS (Elastic Kubernetes Services) clusters.",
-                "Orchestrated distributed AI workloads using Ray, enabling parallel execution of large-scale summarization, intelligent Q&A, and knowledge synthesis tasks across enterprise support datasets.",
-                "Established full-stack observability with Prometheus and Grafana, monitoring end-to-end system latency, retrieval performance, LLM response quality, and resource utilization for production AI services.",
-                "Implemented LLM prompt lifecycle management using PromptLayer, enabling centralized versioning, auditability, A/B testing, and performance tuning across multiple internal GenAI applications.",
-                "Integrated continuous drift detection and AI observability using Evidently AI, embedding explainability metrics, data drift indicators, and automated alerts into operational dashboards to maintain long-term model reliability.",
-                "Automated dataset provenance, versioning, and artifact lineage with DVC, ensuring reproducibility for retraining cycles, compliance audits, and internal governance requirements.",
-                "Built multimodal AI workflows combining Whisper for speech-to-text transcription and CLIP for image-text representation, enabling structured insights from call audio, screenshots, and mixed-media support artifacts.",
-                "Engineered end-to-end ETL and ML orchestration pipelines using Apache Airflow, coordinating data ingestion from BigQuery and Cloud Storage for downstream training, evaluation, and inference.",
-                "Delivered secure LLM API services via Cloud Functions and Cloud Run, enforcing authentication with Cloud IAM and safeguarding secrets using Secret Manager for enterprise compliance.",
-                "Provisioned and managed cloud-native infrastructure using Terraform, Kubernetes, and Helm, enabling horizontal scaling and reliable rollout of multi-model inference workloads.",
-                "Optimized CI/CD pipelines with GitHub Actions, automating container builds, deployment manifests, and controlled model promotion across development, staging, and production environments.",
-                "Systematized the ML lifecycle using TFX and MLflow, governing training, validation, model registry, and controlled production releases for internal AI services.",
-                "Enabled scheduled batch processing using Cloud Scheduler, automating large-scale summarization, classification, and archival processing of customer support and operational data.",
-                "Facilitated collaborative experimentation through Vertex AI Workbench, supporting notebook-driven fine-tuning, evaluation, and rapid prototyping in scalable compute environments."
-            ]
-        },
-        {
-            "client": "Mastercard",
-            "location": "St Louis",
-            "role": "Sr. Data Scientist",
-            "duration": "June 2022 to Dec 2024",
-            "responsibilities": [
-                "Worked on large-scale fraud analytics platforms processing high-volume transactional and clickstream data using Big Data and cloud-based architectures to detect suspicious behavior in real-time and near-real-time environments.",
-                "Designed and developed advanced machine learning models to identify fraudulent activity by learning behavioral patterns from customer navigation flows, transaction sequences, device attributes, and session-level signals.",
-                "Built low-latency fraud risk scoring models using Support Vector Machines (SVM) and ensemble learning techniques, optimized for production systems requiring millisecond-level response times.",
-                "Engineered high-quality behavioral and interaction features from clickstream data, including session duration, navigation depth, interaction frequency, action velocity, and anomaly-based indicators.",
-                "Created temporal and sequential features to capture deviations in customer behavior across sessions, enabling early detection of account takeover and synthetic identity fraud.",
-                "Applied deep learning models, including LSTM and Transformer-based architectures, to model sequential click behavior and transaction timelines for improved fraud detection accuracy.",
-                "Integrated representation learning and generative AI techniques to identify novel and previously unseen fraud patterns beyond traditional rule-based and historical model assumptions.",
-                "Developed graph-based features and network analytics linking customers, devices, IPs, merchants, sessions, and locations to uncover coordinated fraud rings and recurring attack patterns.",
-                "Addressed extreme class imbalance by optimizing loss functions, tuning decision thresholds, and maximizing precision-recall trade-offs to minimize false positives.",
-                "Performed extensive feature engineering and preprocessing including feature interactions, scaling, normalization, and encoding using Scikit-learn pipelines to ensure modeling consistency and reproducibility.",
-                "Built end-to-end machine learning pipelines on AWS SageMaker for data ingestion, feature processing, model training, evaluation, and deployment at scale.",
-                "Used AWS SageMaker Studio for collaborative experimentation, model benchmarking, and rapid iteration across multiple fraud detection use cases.",
-                "Deployed real-time inference services using AWS Lambda, enabling scalable and cost-efficient fraud decisioning for customer-facing applications.",
-                "Leveraged AWS cloud infrastructure including S3, EC2, EMR, DynamoDB, and Redshift to support distributed data processing, storage, and analytics workloads.",
-                "Developed NLP pipelines on customer service interactions by converting call recordings to text using AWS Transcribe, followed by text preprocessing, tokenization, and lemmatization.",
-                "Extracted actionable insights from customer service transcripts to identify behavioral signals correlated with fraud attempts and abnormal account activity.",
-                "Integrated explainable AI (XAI) techniques using SHAP to interpret model predictions and support risk reviews, audits, and governance requirements.",
-                "Built model monitoring frameworks to track accuracy, latency, false positives, and performance stability across production ML deployments.",
-                "Implemented automated data and model drift detection using Statistical Process Control (SPC) techniques to identify distribution shifts over time.",
-                "Designed and maintained dimensional data marts using Star and Snowflake schemas to support large-scale fraud analytics, reporting, and downstream machine learning workflows.",
-                "Developed CI/CD pipelines for machine learning models, enabling faster, safer, and repeatable production releases while reducing deployment timelines by approximately 30%.",
-                "Created executive-level dashboards using Power BI to visualize fraud trends, customer impact metrics, and model performance for senior leadership.",
-                "Collaborated with product, risk, cybersecurity, and operations teams to translate business requirements into scalable analytics and machine learning solutions.",
-                "Supported fraud investigations and incident analysis by performing root-cause analysis on fraud spikes, model anomalies, and increases in false positives.",
-                "Ensured compliance with data governance, quality, and responsible AI standards by documenting models, monitoring bias, and validating model behavior in production environments."
-            ]
-        },
-        {
-            "client": "Nexteraenergy",
-            "location": "Florida",
-            "role": "Sr. Data Scientist",
-            "duration": "Oct 2020 to May 2022",
-            "responsibilities": [
-                "Partnered with business and operations teams to translate utility and customer challenges into data science problems such as customer retention, program adoption, and operational trend analysis.",
-                "Performed exploratory data analysis on large-scale customer, usage, and operational datasets to uncover behavioral patterns and drivers affecting customer engagement.",
-                "Built automated ETL pipelines to clean, normalize, and integrate data from multiple source systems, ensuring consistent inputs for analytics and modeling.",
-                "Designed dimensional data models (Star and Snowflake schemas) to support high-performance reporting and analytics for leadership dashboards.",
-                "Developed executive dashboards that tracked operational KPIs, customer trends, and financial metrics, significantly reducing manual reporting effort.",
-                "Implemented Logistic Regression and Regularized Linear Models (L1/L2) as baseline models to explain key drivers behind customer attrition and program participation.",
-                "Built Tree-based ensemble models such as RandomForest and Gradient Boosting (XGBoost) to improve prediction accuracy for customer retention and engagement use cases.",
-                "Used Hyperparameter tuning and cross-validation to optimize model performance while avoiding overfitting on historical utility data.",
-                "Applied Time Series models (ARIMA and Seasonal ARIMA) to analyze trends and seasonality in customer usage and operational metrics.",
-                "Implemented Clustering algorithms (K-Means and Hierarchical Clustering) to segment customers and regions based on usage patterns, enabling targeted program strategies.",
-                "Used Principal Component Analysis (PCA) to reduce dimensionality and improve model stability for high-dimensional datasets.",
-                "Developed Naïve Bayes and Support Vector Machine (SVM) models for classification tasks where interpretability and performance were critical.",
-                "Contributed to a rule-based and ML-assisted recommendation engine that suggested relevant customer programs and services based on historical behavior.",
-                "Performed model evaluation and validation using metrics such as ROC-AUC, precision-recall, and confusion matrices to ensure business reliability.",
-                "Conducted statistical hypothesis testing to validate assumptions and measure the impact of customer programs and operational changes.",
-                "Analyzed customer feedback and service interaction text using TF-IDF, n-grams, and traditional NLP techniques, which were standard and effective during this period.",
-                "Ensured data quality by detecting anomalies, missing values, and inconsistencies that could negatively impact analytics and model outcomes.",
-                "Used cloud-based compute environments to scale model training and data processing workloads efficiently.",
-                "Built and deployed Dockerized microservices for ML models to enable scalable, low-latency inference.",
-                "Implemented CI/CD pipelines for automated deployment and version control of ML models and analytics solutions.",
-                "Collaborated with data engineers and BI teams to deploy analytics datasets and models into production reporting environments.",
-                "Participated in Agile delivery cycles, continuously refining models and analytics based on stakeholder feedback and new data availability."
-            ]
-        },
-        {
-            "client": "US Bank",
-            "location": "Irving, Texas",
-            "role": "Data Scientist",
-            "duration": "June 2018 to Sep 2020",
-            "responsibilities": [
-                "Performed detailed exploratory data analysis (EDA) using univariate and multivariate statistical techniques to understand customer behavior, identify correlations, and engineer high-impact features for modeling.",
-                "Built and evaluated machine learning models using Python (Pandas, NumPy, Scikit-learn, SciPy) and visualization libraries (Matplotlib, Seaborn) to support customer analytics and risk-related use cases.",
-                "Developed and trained credit risk and scoring models using Logistic Regression, Random Forests, SVMs, and XGBoost, improving financial risk assessment and decision accuracy.",
-                "Executed customer segmentation using K-Means, DBSCAN, and heuristic-based clustering, enabling targeted marketing campaigns and controlled A/B experiments.",
-                "Designed and implemented customer churn prediction pipelines using Gradient-Boosted Trees and Random Forests, identifying high-risk customers and integrating insights into CRM systems for proactive retention actions.",
-                "Built personalized recommendation engines by combining collaborative filtering with XGBoost ranking models, optimizing promotional targeting and plan recommendations across diverse customer cohorts.",
-                "Implemented fraud detection workflows using Isolation Forests and statistical anomaly detection, identifying irregular billing patterns and suspicious usage behavior.",
-                "Developed time-series forecasting models using ARIMA and LSTM-based approaches to predict call volumes and support workforce planning and operational optimization.",
-                "Created dimensional data models (Snowflake schema) and engineered scalable ETL pipelines, delivering reliable, ML-ready datasets for analytics and modeling.",
-                "Built near–real-time analytics pipelines using Apache Spark Streaming, processing CDR and network telemetry data to trigger automated alerts for service degradation and outage conditions.",
-                "Implemented speech-to-insight NLP pipelines leveraging Transformer-based summarization models, extracting key themes, recurring issues, and drivers from customer support call transcripts.",
-                "Developed voice analytics solutions using Wav2Vec 2.0, converting audio to structured text for automated sentiment analysis and quality scoring.",
-                "Supported hybrid search and retrieval solutions by integrating SQL-based search with semantic embedding models, improving discovery across structured and unstructured data sources.",
-                "Automated model packaging and deployment using Docker, deploying scalable inference services on AWS SageMaker.",
-                "Packaged ML inference logic as RESTful APIs using Flask, containerized with Docker and deployed behind autoscaling infrastructure for high availability.",
-                "Integrated predictive model outputs with CRM platforms via secure REST API’s, enabling agent-assist tools and next-best-action recommendations.",
-                "Developed interactive Tableau dashboards to monitor churn indicators, NPS trends, campaign performance, and operational KPIs across business regions.",
-                "Established monitoring and observability using AWS CloudWatch and ELK Stack, ensuring visibility into data pipelines, model performance, and production service health."
-            ]
-        },
-        {
-            "client": "Delta Dental",
-            "location": "Michigan",
-            "role": "Data Engineer",
-            "duration": "Feb 2015 to May 2018",
-            "responsibilities": [
-                "Worked with Python, pandas, NumPy, scikit-learn, and TensorFlow to support healthcare analytics and basic predictive modeling.",
-                "Performed large-scale data cleaning, preprocessing, and validation on patient records, appointment logs, and claims datasets.",
-                "Extracted and manipulated data using SQL, writing complex joins, aggregations, and data quality checks.",
-                "Built exploratory visualizations using Matplotlib, Seaborn, Tableau, and Power BI for operational and clinical insights.",
-                "Assisted in developing baseline ML models (logistic regression, decision trees, random forest, k-means) for internal analytics tasks.",
-                "Conducted extensive EDA on patient visit trends, hospital utilization patterns, and healthcare operational metrics.",
-                "Created automated reporting workflows using Python scripts, Excel, and SQL, reducing manual reporting effort.",
-                "Integrated data from multiple systems, including SQL Server, Oracle databases, CSV/Excel files, and internal hospital systems.",
-                "Applied text preprocessing using NLTK/spaCy on unstructured feedback and clinical notes to extract basic insights.",
-                "Worked with Apache Spark (PySpark) for handling large healthcare datasets and performing distributed transformations.",
-                "Supported ETL workflows by preparing data pipelines and assisting with batch processing in Hadoop environments.",
-                "Ensured HIPAA compliance and followed secure data-handling guidelines for sensitive patient information.",
-                "Designed dashboards to track KPIs such as patient wait times, admission trends, bed occupancy, and physician workload.",
-                "Collaborated with clinicians, business analysts, and IT teams to gather data requirements and validate analytical outputs.",
-                "Participated in system testing (UAT), helping validate dashboards, datasets, and analytics applications before deployment, and worked on Pytest for writing down checks in the pipeline.",
-                "Documented data processes, transformation logic, and dashboard specifications for internal teams and reproducibility.",
-                "Created segmentation of patient groups using simple clustering techniques for operational insights.",
-                "Assisted in improving ETL performance by optimizing SQL queries and reducing data processing time.",
-                "Used Git/GitHub for version control and code collaboration across the data science team.",
-                "Supported development of standard templates for dashboards, visual reports, and analysis deliverables used across departments"
-            ]
-        }
+  "personal_info": {
+    "name": "HARISH JAMALLAMUDI",
+    "title": "Sr. Data Scientist / AI Engineer.",
+    "email": "harishjamalladi@gmail.com",
+    "phone": "314-669-6026"
+  },
+  "professional_summary": {
+    "overview": "Senior Data Scientist with 11+ years of experience, including 8 years in Data Science and 3 years in Data Engineering, specializing in designing and deploying AI-driven solutions. Proven expertise in Machine Learning, Deep Learning, NLP, and predictive analytics, with hands-on experience in MLOps, model operationalization, and real-time anomaly detection. Adept at building scalable end-to-end ML pipelines, optimizing forecasting systems, and delivering innovation-led business insights that drive measurable outcomes.",
+    "key_highlights": [
+      "Highly proficient in Python programming, specializing in writing clean, optimized, and well-documented code for production-grade applications.",
+      "Extensive experience using Python for machine learning, data engineering, data analysis, and intelligent automation use cases.",
+      "Expertise applying advanced ML, AI, and data engineering techniques to build innovative data-driven solutions that significantly improve efficiency, accuracy, and decision-making.",
+      "Hands-on experience in predictive modeling and regression techniques to extract actionable business insights.",
+      "Strong ability in data mining, exploratory data analysis (EDA), and advanced statistical interpretation to solve complex business challenges.",
+      "Skilled across a wide spectrum of machine learning frameworks, algorithms, and deployment methodologies, ensuring adaptability across domains and architectures.",
+      "Designed and optimized real-time anomaly detection systems, improving data quality and enabling early risk identification.",
+      "Built and automated end-to-end forecasting pipelines, accelerating demand prediction and operational planning.",
+      "Applied Proximal Policy Optimization (PPO) for dynamic reorder optimization, driving substantial reductions in inventory holding costs.",
+      "Improved forecasting accuracy by leveraging transfer learning and pre-trained Transformer models integrated with LSTM architectures on time-series data.",
+      "Enthusiastic about Generative AI and OpenAI ecosystem, with hands-on exposure to GPT, LLaMA, prompt engineering, and fine-tuning techniques.",
+      "Knowledgeable in Retrieval-Augmented Generation (RAG) to enhance LLM responses using external knowledge sources.",
+      "Familiar with LoRA-based efficient fine-tuning techniques for optimizing LLM performance with minimal computational overhead.",
+      "Utilized AutoML for streamlined model selection and hyperparameter tuning, saving valuable optimization time.",
+      "Contributed to the development of advanced recommender systems, combining collaborative filtering and content- based features.",
+      "Applied multi-agent Deep Q-Learning strategies for optimizing pricing decisions, resulting in a noticeable revenue increase.",
+      "Managed cloud infrastructure as code using Terraform, showcasing proficiency in Infrastructure as Code (IaC) practices.",
+      "Extensive experience with serverless deployment on cloud platforms, ensuring high scalability and cost-efficiency.",
+      "Led the integration of Natural Language Processing for real-time reaction to competitor price changes, showcasing agility in adapting to market dynamics.",
+      "Applied advanced statistical analyses, A/B testing, and clustering techniques to uncover insights and drive informed decision-making.",
+      "Developed executive-level visualizations for effective reporting and contributed to the production of recommendation engines.",
+      "Demonstrated proficiency in Git version control, ensuring efficient collaboration and code management.",
+      "Successfully adopted new data technologies, including Apache Spark, showcasing adaptability to emerging industry standards.",
+      "Managed cloud infrastructure across AWS, demonstrating a broad understanding of services offered by both platforms including but not limited to EC2, Lambda, Elastic Beanstalk, ECR, ECS, EKS, S3, RDS, VPC/Subnets, CloudFront, Route53, API Gateway, SageMaker suite, Redshift, Kinesis, CloudWatch, CloudFormation, CloudTrail etc.",
+      "Leveraged Image Processing techniques for object recognition using Deep Learning techniques.",
+      "Query optimization, execution plan and Performance tuning of queries for better performance in SQL.",
+      "Worked on Shiny and R application showcasing machine learning for improving the forecast of business.",
+      "Hands on experience with version control systems like GIT, Git hub."
     ]
+  },
+  "education": {
+    "degree": "Masters in Computer Science",
+    "institution": "Saint Louis University",
+    "location": "USA"
+  },
+  "technologies": {
+    "Programming Languages": [
+      "Python",
+      "R",
+      "SQL",
+      "Java"
+    ],
+    "AI/ML Frameworks": [
+      "TensorFlow",
+      "Keras",
+      "PyTorch",
+      "Scikit-learn",
+      "XGBoost",
+      "Hugging Face",
+      "LangChain",
+      "NLTK",
+      "spaCy"
+    ],
+    "GenAI & LLM": [
+      "RAG",
+      "Prompt Engineering",
+      "LLaMA2",
+      "Mistral",
+      "Google Gemini",
+      "PaLM",
+      "Whisper",
+      "CLIP",
+      "FAISS",
+      "Pinecone",
+      "Weaviate",
+      "LoRA"
+    ],
+    "Cloud & MLOps": [
+      "AWS (EC2, Lambda, S3, SageMaker, Redshift, Kinesis)",
+      "GCP (Vertex AI, BigQuery, Cloud Functions, Cloud Run)",
+      "Docker",
+      "Kubernetes (EKS)",
+      "Terraform",
+      "MLflow",
+      "TFX",
+      "DVC",
+      "Airflow",
+      "BentoML",
+      "KServe"
+    ],
+    "Big Data & Databases": [
+      "Apache Spark (PySpark)",
+      "Hadoop",
+      "Redshift",
+      "Snowflake",
+      "BigQuery",
+      "DynamoDB",
+      "PostgreSQL",
+      "Oracle"
+    ],
+    "Reporting Tools": [
+      "MS Office",
+      "JIRA",
+      "Confluence",
+      "Trello",
+      "Notion"
+    ],
+    "Version": [
+      "Git",
+      "GitHub Actions"
+    ],
+    "Monitoring & Logging": [
+      "Grafana",
+      "Prometheus"
+    ],
+    "Visualization": [
+      "Tableau",
+      "Power BI",
+      "Matplotlib",
+      "Seaborn"
+    ]
+  },
+  "professional_experience": [
+    {
+      "client": "Charter Communications",
+      "location": "St. Louis, MO",
+      "role": "GenAI/AI Engineer",
+      "duration": "Jan 2025 - Present",
+      "responsibilities": [
+        "Designed and implemented enterprise-grade Retrieval-Augmented Generation (RAG) architectures using LangChain and Vertex AI, enabling real-time retrieval of internal knowledge bases, customer history, and operational documentation to support live customer support agents.",
+        "Built domain-specific embedding pipelines and vector retrieval layers using FAISS, Pinecone, and Weaviate, enabling low-latency semantic search across internal policies, troubleshooting guides, call transcripts, and historical service data.",
+        "Customized and optimized open-source LLMs (LLaMA2, Mistral) via the Hugging Face ecosystem, and integrated PaLM APIs, later embedding Google Gemini (Dec 2023) into internal AI workflows for multimodal reasoning, agent assistance, and automated call summarization.",
+        "Developed Agent Assist intelligence combining LLM reasoning with retrieval pipelines to surface context-aware recommendations and next-best actions for front-line agents during live customer interactions.",
+        "Implemented Summary AI pipelines leveraging transformer-based NLP models to automatically generate structured call summaries and searchable internal notes, reducing post-call documentation time and improving cross-agent handoffs.",
+        "Deployed high-throughput model serving infrastructures using BentoML and KServe, delivering concurrent, low- latency inference for LLM-powered agent tools across distributed EKS (Elastic Kubernetes Services) clusters.",
+        "Orchestrated distributed AI workloads using Ray, enabling parallel execution of large-scale summarization, intelligent Q&A, and knowledge synthesis tasks across enterprise support datasets.",
+        "Established full-stack observability with Prometheus and Grafana, monitoring end-to-end system latency, retrieval performance, LLM response quality, and resource utilization for production AI services.",
+        "Implemented LLM prompt lifecycle management using PromptLayer, enabling centralized versioning, auditability, A/B testing, and performance tuning across multiple internal GenAI applications.",
+        "Integrated continuous drift detection and AI observability using Evidently AI, embedding explainability metrics, data drift indicators, and automated alerts into operational dashboards to maintain long-term model reliability.",
+        "Automated dataset provenance, versioning, and artifact lineage with DVC, ensuring reproducibility for retraining cycles, compliance audits, and internal governance requirements.",
+        "Built multimodal AI workflows combining Whisper for speech-to-text transcription and CLIP for image-text representation, enabling structured insights from call audio, screenshots, and mixed-media support artifacts.",
+        "Engineered end-to-end ETL and ML orchestration pipelines using Apache Airflow, coordinating data ingestion from BigQuery and Cloud Storage for downstream training, evaluation, and inference.",
+        "Delivered secure LLM API services via Cloud Functions and Cloud Run, enforcing authentication with Cloud IAM and safeguarding secrets using Secret Manager for enterprise compliance.",
+        "Provisioned and managed cloud-native infrastructure using Terraform, Kubernetes, and Helm, enabling horizontal scaling and reliable rollout of multi-model inference workloads.",
+        "Optimized CI/CD pipelines with GitHub Actions, automating container builds, deployment manifests, and controlled model promotion across development, staging, and production environments.",
+        "Systematized the ML lifecycle using TFX and MLflow, governing training, validation, model registry, and controlled production releases for internal AI services.",
+        "Enabled scheduled batch processing using Cloud Scheduler, automating large-scale summarization, classification, and archival processing of customer support and operational data.",
+        "Facilitated collaborative experimentation through Vertex AI Workbench, supporting notebook-driven fine-tuning, evaluation, and rapid prototyping in scalable compute environments."
+      ]
+    },
+    {
+      "client": "Mastercard",
+      "location": "St Louis",
+      "role": "Sr. Data Scientist",
+      "duration": "June 2022 to Dec 2024",
+      "responsibilities": [
+        "Worked on large-scale fraud analytics platforms processing high-volume transactional and clickstream data using Big Data and cloud-based architectures to detect suspicious behavior in real-time and near-real-time environments.",
+        "Designed and developed advanced machine learning models to identify fraudulent activity by learning behavioral patterns from customer navigation flows, transaction sequences, device attributes, and session-level signals.",
+        "Built low-latency fraud risk scoring models using Support Vector Machines (SVM) and ensemble learning techniques, optimized for production systems requiring millisecond-level response times.",
+        "Engineered high-quality behavioral and interaction features from clickstream data, including session duration, navigation depth, interaction frequency, action velocity, and anomaly-based indicators.",
+        "Created temporal and sequential features to capture deviations in customer behavior across sessions, enabling early detection of account takeover and synthetic identity fraud.",
+        "Applied deep learning models, including LSTM and Transformer-based architectures, to model sequential click behavior and transaction timelines for improved fraud detection accuracy.",
+        "Integrated representation learning and generative AI techniques to identify novel and previously unseen fraud patterns beyond traditional rule-based and historical model assumptions.",
+        "Developed graph-based features and network analytics linking customers, devices, IPs, merchants, sessions, and locations to uncover coordinated fraud rings and recurring attack patterns.",
+        "Addressed extreme class imbalance by optimizing loss functions, tuning decision thresholds, and maximizing precision-recall trade-offs to minimize false positives.",
+        "Performed extensive feature engineering and preprocessing including feature interactions, scaling, normalization, and encoding using Scikit-learn pipelines to ensure modeling consistency and reproducibility.",
+        "Built end-to-end machine learning pipelines on AWS SageMaker for data ingestion, feature processing, model training, evaluation, and deployment at scale.",
+        "Used AWS SageMaker Studio for collaborative experimentation, model benchmarking, and rapid iteration across multiple fraud detection use cases.",
+        "Deployed real-time inference services using AWS Lambda, enabling scalable and cost-efficient fraud decisioning for customer-facing applications.",
+        "Leveraged AWS cloud infrastructure including S3, EC2, EMR, DynamoDB, and Redshift to support distributed data processing, storage, and analytics workloads.",
+        "Developed NLP pipelines on customer service interactions by converting call recordings to text using AWS Transcribe, followed by text preprocessing, tokenization, and lemmatization.",
+        "Extracted actionable insights from customer service transcripts to identify behavioral signals correlated with fraud attempts and abnormal account activity.",
+        "Integrated explainable AI (XAI) techniques using SHAP to interpret model predictions and support risk reviews, audits, and governance requirements.",
+        "Built model monitoring frameworks to track accuracy, latency, false positives, and performance stability across production ML deployments.",
+        "Implemented automated data and model drift detection using Statistical Process Control (SPC) techniques to identify distribution shifts over time.",
+        "Designed and maintained dimensional data marts using Star and Snowflake schemas to support large-scale fraud analytics, reporting, and downstream machine learning workflows.",
+        "Developed CI/CD pipelines for machine learning models, enabling faster, safer, and repeatable production releases while reducing deployment timelines by approximately 30%.",
+        "Created executive-level dashboards using Power BI to visualize fraud trends, customer impact metrics, and model performance for senior leadership.",
+        "Collaborated with product, risk, cybersecurity, and operations teams to translate business requirements into scalable analytics and machine learning solutions.",
+        "Supported fraud investigations and incident analysis by performing root-cause analysis on fraud spikes, model anomalies, and increases in false positives.",
+        "Ensured compliance with data governance, quality, and responsible AI standards by documenting models, monitoring bias, and validating model behavior in production environments."
+      ]
+    },
+    {
+      "client": "Nexteraenergy",
+      "location": "Florida",
+      "role": "Sr. Data Scientist",
+      "duration": "Oct 2020 to May 2022",
+      "responsibilities": [
+        "Partnered with business and operations teams to translate utility and customer challenges into data science problems such as customer retention, program adoption, and operational trend analysis.",
+        "Performed exploratory data analysis on large-scale customer, usage, and operational datasets to uncover behavioral patterns and drivers affecting customer engagement.",
+        "Built automated ETL pipelines to clean, normalize, and integrate data from multiple source systems, ensuring consistent inputs for analytics and modeling.",
+        "Designed dimensional data models (Star and Snowflake schemas) to support high-performance reporting and analytics for leadership dashboards.",
+        "Developed executive dashboards that tracked operational KPIs, customer trends, and financial metrics, significantly reducing manual reporting effort.",
+        "Implemented Logistic Regression and Regularized Linear Models (L1/L2) as baseline models to explain key drivers behind customer attrition and program participation.",
+        "Built Tree-based ensemble models such as Random Forest and Gradient Boosting (XGBoost) to improve prediction accuracy for customer retention and engagement use cases.",
+        "Used Hyperparameter tuning and cross-validation to optimize model performance while avoiding overfitting on historical utility data.",
+        "Applied Time Series models (ARIMA and Seasonal ARIMA) to analyze trends and seasonality in customer usage and operational metrics.",
+        "Implemented Clustering algorithms (K-Means and Hierarchical Clustering) to segment customers and regions based on usage patterns, enabling targeted program strategies.",
+        "Used Principal Component Analysis (PCA) to reduce dimensionality and improve model stability for high- dimensional datasets.",
+        "Developed Na\u00efve Bayes and Support Vector Machine (SVM) models for classification tasks where interpretability and performance were critical.",
+        "Contributed to a rule-based and ML-assisted recommendation engine that suggested relevant customer programs and services based on historical behavior.",
+        "Performed model evaluation and validation using metrics such as ROC-AUC, precision-recall, and confusion matrices to ensure business reliability.",
+        "Conducted statistical hypothesis testing to validate assumptions and measure the impact of customer programs and operational changes.",
+        "Analyzed customer feedback and service interaction text using TF-IDF, n-grams, and traditional NLP techniques, which were standard and effective during this period.",
+        "Ensured data quality by detecting anomalies, missing values, and inconsistencies that could negatively impact analytics and model outcomes.",
+        "Used cloud-based compute environments to scale model training and data processing workloads efficiently.",
+        "Built and deployed Dockerized microservices for ML models to enable scalable, low-latency inference.",
+        "Implemented CI/CD pipelines for automated deployment and version control of ML models and analytics solutions.",
+        "Collaborated with data engineers and BI teams to deploy analytics datasets and models into production reporting environments.",
+        "Participated in Agile delivery cycles, continuously refining models and analytics based on stakeholder feedback and new data availability."
+      ]
+    },
+    {
+      "client": "US Bank",
+      "location": "Irving, Texas",
+      "role": "Data Scientist",
+      "duration": "June 2018 to Sep 2020",
+      "responsibilities": [
+        "Performed detailed exploratory data analysis (EDA) using univariate and multivariate statistical techniques to understand customer behavior, identify correlations, and engineer high-impact features for modeling.",
+        "Built and evaluated machine learning models using Python (Pandas, NumPy, Scikit-learn, SciPy) and visualization libraries (Matplotlib, Seaborn) to support customer analytics and risk-related use cases.",
+        "Developed and trained credit risk and scoring models using Logistic Regression, Random Forests, SVMs, and XGBoost, improving financial risk assessment and decision accuracy.",
+        "Executed customer segmentation using K-Means, DBSCAN, and heuristic-based clustering, enabling targeted marketing campaigns and controlled A/B experiments.",
+        "Designed and implemented customer churn prediction pipelines using Gradient-Boosted Trees and Random Forests, identifying high-risk customers and integrating insights into CRM systems for proactive retention actions.",
+        "Built personalized recommendation engines by combining collaborative filtering with XGBoost ranking models, optimizing promotional targeting and plan recommendations across diverse customer cohorts.",
+        "Implemented fraud detection workflows using Isolation Forests and statistical anomaly detection, identifying irregular billing patterns and suspicious usage behavior.",
+        "Developed time-series forecasting models using ARIMA and LSTM-based approaches to predict call volumes and support workforce planning and operational optimization.",
+        "Created dimensional data models (Snowflake schema) and engineered scalable ETL pipelines, delivering reliable, ML-ready datasets for analytics and modeling.",
+        "Built near\u2013real-time analytics pipelines using Apache Spark Streaming, processing CDR and network telemetry data to trigger automated alerts for service degradation and outage conditions.",
+        "Implemented speech-to-insight NLP pipelines leveraging Transformer-based summarization models, extracting key themes, recurring issues, and drivers from customer support call transcripts.",
+        "Developed voice analytics solutions using Wav2Vec 2.0, converting audio to structured text for automated sentiment analysis and quality scoring.",
+        "Supported hybrid search and retrieval solutions by integrating SQL-based search with semantic embedding models, improving discovery across structured and unstructured data sources.",
+        "Automated model packaging and deployment using Docker, deploying scalable inference services on AWS SageMaker.",
+        "Packaged ML inference logic as RESTful APIs using Flask, containerized with Docker and deployed behind autoscaling infrastructure for high availability.",
+        "Integrated predictive model outputs with CRM platforms via secure REST API\u2019s, enabling agent-assist tools and next-best action recommendations.",
+        "Developed interactive Tableau dashboards to monitor churn indicators, NPS trends, campaign performance, and operational KPIs across business regions.",
+        "Established monitoring and observability using AWS CloudWatch and ELK Stack, ensuring visibility into data pipelines, model performance, and production service health."
+      ]
+    },
+    {
+      "client": "Delta Dental",
+      "location": "Unknown",
+      "role": "Data Engineer",
+      "duration": "Feb 2015 to May 2018",
+      "responsibilities": [
+        "Worked with Python, pandas, NumPy, scikit-learn, and TensorFlow to support healthcare analytics and basic predictive modeling.",
+        "Performed large-scale data cleaning, preprocessing, and validation on patient records, appointment logs, and claims datasets.",
+        "Extracted and manipulated data using SQL, writing complex joins, aggregations, and data quality checks.",
+        "Built exploratory visualizations using Matplotlib, Seaborn, Tableau, and Power BI for operational and clinical insights.",
+        "Assisted in developing baseline ML models (logistic regression, decision trees, random forest, k-means) for internal analytics tasks.",
+        "Conducted extensive EDA on patient visit trends, hospital utilization patterns, and healthcare operational metrics.",
+        "Created automated reporting workflows using Python scripts, Excel, and SQL, reducing manual reporting effort.",
+        "Integrated data from multiple systems, including SQL Server, Oracle databases, CSV/Excel files, and internal hospital systems.",
+        "Applied text preprocessing using NLTK/spaCy on unstructured feedback and clinical notes to extract basic insights.",
+        "Worked with Apache Spark (PySpark) for handling large healthcare datasets and performing distributed transformations.",
+        "Supported ETL workflows by preparing data pipelines and assisting with batch processing in Hadoop environments.",
+        "Ensured HIPAA compliance and followed secure data-handling guidelines for sensitive patient information.",
+        "Designed dashboards to track KPIs such as patient wait times, admission trends, bed occupancy, and physician workload.",
+        "Collaborated with clinicians, business analysts, and IT teams to gather data requirements and validate analytical outputs.",
+        "Participated in system testing (UAT), helping validate dashboards, datasets, and analytics applications before deployment, and worked on Pytest for writing down checks in the pipeline.",
+        "Documented data processes, transformation logic, and dashboard specifications for internal teams and reproducibility.",
+        "Created segmentation of patient groups using simple clustering techniques for operational insights.",
+        "Assisted in improving ETL performance by optimizing SQL queries and reducing data processing time.",
+        "Used Git/GitHub for version control and code collaboration across the data science team.",
+        "Supported development of standard templates for dashboards, visual reports, and analysis deliverables used across departments"
+      ]
+    }
+  ]
 }

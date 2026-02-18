@@ -1,10 +1,9 @@
 
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || "super-secret-key-change-this";
 const key = new TextEncoder().encode(SECRET_KEY);
 

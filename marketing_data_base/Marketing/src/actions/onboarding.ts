@@ -1,11 +1,10 @@
 
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { verifySession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-const prisma = new PrismaClient();
 
 export async function uploadResume(formData: FormData) {
     try {
@@ -53,7 +52,7 @@ export async function replaceResume(formData: FormData) {
         const buffer = Buffer.from(await file.arrayBuffer());
 
         // Transaction: Delete old -> Create new
-        await prisma.$transaction([
+        const [_, newResume] = await prisma.$transaction([
             prisma.resume.deleteMany({ where: { userId: session.id } }),
             prisma.resume.create({
                 data: {
@@ -64,6 +63,18 @@ export async function replaceResume(formData: FormData) {
                 },
             }),
         ]);
+
+        // Trigger parsing efficiently (fire and forget or await depending on need)
+        // We'll await it to ensure it starts processing
+        try {
+            await fetch(`http://127.0.0.1:8001/convert_resume_to_json?resume_id=${newResume.id}`, {
+                method: "POST",
+            });
+            console.log("Triggered resume parsing for:", newResume.id);
+        } catch (parseError) {
+             console.error("Failed to trigger resume parsing:", parseError);
+             // We don't fail the upload if parsing trigger fails, but we log it.
+        }
 
         return { success: true };
     } catch (error: any) {

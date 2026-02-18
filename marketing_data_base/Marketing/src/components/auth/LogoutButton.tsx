@@ -1,12 +1,30 @@
-
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { logoutUser } from "@/actions/auth";
 
 export default function LogoutButton() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            setLoading(true);
+            await logoutUser();
+            router.refresh(); // Clear server component cache
+            router.push("/"); // Navigate to home
+        } catch (error) {
+            console.error("Logout failed:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <button
-            onClick={() => logoutUser()}
+            onClick={handleLogout}
+            disabled={loading}
             className="btn btn-outline"
             style={{
                 position: "absolute",
@@ -19,7 +37,7 @@ export default function LogoutButton() {
                 backdropFilter: "blur(4px)"
             }}
         >
-            Sign Out
+            {loading ? "Signing out..." : "Sign Out"}
         </button>
     );
 }

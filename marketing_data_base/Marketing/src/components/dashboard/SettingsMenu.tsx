@@ -169,7 +169,7 @@ export default function SettingsMenu() {
                 }}
                 disabled={loading}
             >
-                <span>⚙️</span> Settings
+                <span>⚙️</span> Profile
             </button>
 
             {/* Dropdown Menu */}

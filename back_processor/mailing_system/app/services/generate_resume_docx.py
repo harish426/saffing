@@ -11,7 +11,11 @@ from app.services.ai_services import GeminiService
 
 class Resume:
     def __init__(self, json_data):
-        self.data = json_data
+        # Handle case where resume data is wrapped in "data" key (e.g. from API response)
+        if "data" in json_data and "personal_info" in json_data["data"]:
+            self.data = json_data["data"]
+        else:
+            self.data = json_data
         self.doc = Document()
         self._setup_document()
         self.ai = GeminiService()
@@ -27,7 +31,7 @@ class Resume:
         # --- Global Font ---
         style = self.doc.styles['Normal']
         style.font.name = 'Arial'
-        style.font.size = Pt(11)
+        style.font.size = Pt(10)
 
     def set_font(self, run, font_name="Arial", size=11, bold=False, italic=False, color=None):
         run.font.name = font_name
@@ -90,7 +94,7 @@ class Resume:
             try:    
                 highlights = self.ai.generate_tailored_resume_content(highlights, job_description)
             except Exception as e:
-                print(e)
+                # print(e)
                 highlights= summary.get("key_highlights",[])
             for i, item in enumerate(highlights):
                 p = self.doc.add_paragraph(item, style='List Bullet')
@@ -216,10 +220,7 @@ class Resume:
 
     def save(self, output_path):
         self.doc.save(output_path)
-        if isinstance(output_path, str):
-            print(f"Successfully created resume at: {output_path}")
-        else:
-             print(f"Successfully created resume in memory buffer")
+
 
 def create_resume_from_json(json_path, output_path, job_description, requirements):
     if not os.path.exists(json_path):
@@ -237,14 +238,28 @@ def create_resume_from_json(json_path, output_path, job_description, requirement
     resume.add_experience_part_two()
     resume.save(output_path)
 
-def generate_resume_buffer(json_path, job_description, requirements):
+def generate_resume_buffer(resume_data, job_description, requirements):
     import io
-    if not os.path.exists(json_path):
-        print(f"Error: JSON file not found at {json_path}")
-        return None
+    
+    if isinstance(resume_data, str):
+        # Check if it's a file path
+        if os.path.exists(resume_data):
+            with open(resume_data, 'r') as f:
+                data = json.load(f)
+        else:
+             # Assume it's a JSON string
+             try:
+                 data = json.loads(resume_data)
+             except json.JSONDecodeError:
+                 # It was neither a valid path nor valid JSON
+                 import logging
+                 logger = logging.getLogger(__name__)
+                 logger.error(f"Error: resume_data is neither a valid file path nor valid JSON string.")
+                 return None
+    else:
+        # It's already a dict (from DB)
+        data = resume_data
 
-    with open(json_path, 'r') as f:
-        data = json.load(f)
     resume = Resume(data)
     resume.add_personal_info()
     resume.add_summary(job_description)

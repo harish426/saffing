@@ -31,6 +31,7 @@ export default function Step1Login({ formData, setFormData, nextStep, isLogin, s
                 if (result?.error) {
                     setError(result.error);
                 } else if (result?.success) {
+                    router.refresh();
                     router.push('/dashboard');
                 }
             } else {

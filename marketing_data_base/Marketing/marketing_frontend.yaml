@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marketing-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: marketing
+  template:
+    metadata:
+      labels:
+        app: marketing
+    spec:
+      containers:
+      - name: frontend
+        # MAKE SURE THIS PATH MATCHES YOUR PUSHED IMAGE
+        image: us-central1-docker.pkg.dev/marketing-frontend-hj/marketing-frontend/staffing:latest
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://neondb_owner:npg_JcyR6Ms3VhGK@ep-restless-cake-ahezkb6f-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        ports:
+        - containerPort: 3000 # Change this if your app runs on 5000, 8080, etc.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: marketing-lb
+spec:
+  sessionAffinity: ClientIP
+  type: LoadBalancer
+  selector:
+    app: marketing
+  ports:
+  - protocol: TCP
+    port: 80        # The port people use in the browser
+    targetPort: 3000  # The port your container is listening on

@@ -54,7 +54,7 @@ export default function JobForm({ initialData, isEditMode = false }: JobFormProp
             const result = await saveJobDescription(formData);
 
             if (result.success) {
-                if (result.emailResult && (result.emailResult.status === 'partial_success' || result.emailResult.status === 'error' || result.emailResult.status === 'failed')) {
+                if (result.emailResult && !result.emailResult.success) {
                     alert("Data saved but email not sent. " + (result.emailResult.message || ""));
                 } else {
                     alert(isEditMode ? "Entry updated successfully!" : "Entry saved successfully!");

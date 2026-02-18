@@ -1,11 +1,10 @@
 
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { hashPassword, verifyPassword, createSession, logout } from "@/lib/auth";
-import { redirect } from "next/navigation";
 
-const prisma = new PrismaClient();
+
 
 export async function registerUser(formData: any) {
     const { name, email, password } = formData;
@@ -57,7 +56,7 @@ export async function loginUser(formData: any) {
 
 export async function logoutUser() {
     await logout();
-    redirect("/");
+    return { success: true };
 }
 
 import { SignJWT, jwtVerify } from "jose";

@@ -1,10 +1,9 @@
 
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
 import { verifySession, verifyPassword, hashPassword } from "@/lib/auth";
 
-const prisma = new PrismaClient();
 
 export async function changePassword(formData: any) {
     try {

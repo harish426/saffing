@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: mailing_system
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    volumes:
+      - ./faiss_store:/app/faiss_store # Persist FAISS index across restarts
+      # - .:/app # Uncomment for hot-reloading during development (mounts current dir)
+    restart: unless-stopped
+    # If you need to access a database on your host machine (Windows):
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    # And update your DATABASE_URL to use host.docker.internal instead of localhost/127.0.0.1

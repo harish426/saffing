@@ -5,9 +5,14 @@ psycopg[binary]
 python-dotenv
 faiss-cpu
 sentence-transformers
-tf-keras
-openAI
 google-genai
+pypdf
+
 
 
 python-docx
+pdfplumber
+pydantic
+python-jose[cryptography]
+pydantic-settings
+python-json-logger

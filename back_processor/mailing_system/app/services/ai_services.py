@@ -19,7 +19,8 @@ class GeminiService:
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key:
-            print("Warning: GEMINI_API_KEY not found in environment variables.")
+            # print("Warning: GEMINI_API_KEY not found in environment variables.")
+            pass
         else:
             self.client = genai.Client(api_key=self.api_key)
 
@@ -121,9 +122,9 @@ class GeminiService:
                 - No subject line in the body.
                 - No placeholders.
                 - Sign off exactly as follows (preceded by 2 newlines):
-                    Best regards,\n
-                    Harish Jamallamudi\n
-                    +13146696026\n
+                    Best regards,
+                    Harish Jamallamudi
+                    +13146696026
                     harishjamalladi@gmail.com
         """
 
@@ -152,7 +153,7 @@ class GeminiService:
                     email_body = json_data.get("email_body", "")
                 else:
                     email_body = data.email_body
-                print(email_body)
+                # print(email_body)
                 # Post-processing cleanup
                 email_body = email_body.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
                 if "Best regards," in email_body:
@@ -168,7 +169,7 @@ class GeminiService:
                 )
 
             except Exception as e:
-                print(f"Attempt {attempt + 1} failed: {e}")
+                # print(f"Attempt {attempt + 1} failed: {e}")
                 if "503" in str(e) or "429" in str(e): # Overloaded or Rate Limit
                     if attempt < max_retries - 1:
                         import time
@@ -181,7 +182,7 @@ class GeminiService:
 
 
     def get_Ai_Subject(self, job_role):
-        print("Generating subject with gemini--latest...")
+        # print("Generating subject with gemini--latest...")
         prompt = f"""
         You are a professional assistant helping a candidate apply for a job.
         
@@ -199,7 +200,8 @@ class GeminiService:
                 contents=prompt
             ).text
         except Exception as e:
-            print(f"Error generating subject with Gemini: {e}")
+            # print(f"Error generating subject with Gemini: {e}")
+            pass
 
 
  
@@ -268,7 +270,7 @@ class GeminiService:
                     return [line.strip("-•* ") for line in text_response.split('\n') if line.strip()]
 
             except Exception as e:
-                print(f"Attempt {attempt + 1} failed: {e}")
+                # print(f"Attempt {attempt + 1} failed: {e}")
                 if "503" in str(e) or "429" in str(e): # Overloaded or Rate Limit
                     if attempt < max_retries - 1:
                         import time
@@ -337,7 +339,7 @@ class GeminiService:
                     return current_skills # Fallback
 
             except Exception as e:
-                print(f"Skill Tailoring Attempt {attempt + 1} failed: {e}")
+                # print(f"Skill Tailoring Attempt {attempt + 1} failed: {e}")
                 if "503" in str(e) or "429" in str(e):
                     if attempt < max_retries - 1:
                         import time

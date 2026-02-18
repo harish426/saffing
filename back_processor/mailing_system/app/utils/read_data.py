@@ -3,6 +3,8 @@ from app.models.models import JobDescription
 
 
 
+from sqlalchemy.orm import joinedload
+
 class read_data:
     def __init__(self):
         self.db = SessionLocal()
@@ -10,7 +12,7 @@ class read_data:
     def get_active_jobs_with_vendor_emails(self):
         try:
             print("Fetching Active JobDescriptions with Vendor Emails...")
-            jobs = self.db.query(JobDescription).filter(
+            jobs = self.db.query(JobDescription).options(joinedload(JobDescription.user)).filter(
             JobDescription.vendorEmail!=None,
             JobDescription.isActive == True
         ).all()
