@@ -35,6 +35,12 @@ class ExperienceItem(BaseModel):
     role: str = Field(description="Job Title/Role")
     duration: str = Field(description="Duration of employment, e.g., 'Jan 2020 - Present'")
     responsibilities: List[str] = Field(description="List of responsibilities and achievements")
+class certification(BaseModel):
+    name: str = Field(description="Name of the certification")
+    institution: str = Field(description="Institution that issued the certification")
+class ProjectItem(BaseModel):
+    name: str = Field(description="Name of the project")
+    description: List[str] = Field(description="Description of the project")
 
 class ResumeSchema(BaseModel):
     personal_info: PersonalInfo
@@ -42,6 +48,10 @@ class ResumeSchema(BaseModel):
     education: EducationItem # Assuming single entry based on json, can be list if needed but matching resume.json structure
     technologies: List[TechnologyCategory] = Field(description="List of technology categories. STRICTLY use the EXACT headers from rule #6.")
     professional_experience: List[ExperienceItem]
+    certifications: List[certification]
+    projects: List[ProjectItem]
+
+
 
 class ResumeAnalysor:
     def __init__(self):
@@ -90,6 +100,9 @@ class ResumeAnalysor:
                   - Keep them and improve them professionally. Heavily prioritize preserving the original content.
             c. **QUALITY**: Any generated points must be credible, specific, and aligned with the role's title and context.
             d. **COMBINE**: The final lists MUST contain [All Original Points] + [Any New Generated Points].
+            e. **PROJECTS & CERTIFICATIONS STRATEGY**:
+                - For Projects and Certifications there might be already existing projects and certifications in the resume text. Makue sure to use all already present projects and certifications. 
+                - If there are no projects and certifications in the resume text, just discard don't add any projects and certifications. keep all the points if exists.
         """
 
         try:

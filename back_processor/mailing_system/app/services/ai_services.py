@@ -219,7 +219,7 @@ class GeminiService:
 
         
         prompt = f"""
-        You are an expert resume writer. Your task is to rewrite the specific job experience points for the client to align perfectly with a target Job Description.
+        You are an expert resume writer. Your task is to rewrite the specific job experience points for the client to align with a target Job Description, WHILE STRICTLY PRESERVING THE TRUTH.
         
         Target Job Description:
         {job_description}
@@ -229,13 +229,19 @@ class GeminiService:
         
         Instructions:
         - Analyze the "Current Experience Points" and "Target Job Description".
-        - Rewrite the experience points to be highly relevant to the Job Description.
-        - You are allowed to "change the whole point" or pivot the focus of the experience to match the JD keywords and requirements, as long as it remains truthful to the underlying skills and tech stack (e.g., if the user did data processing, and JD asks for ETL, emphasize the ETL aspect).
+        - Rewrite the experience points to highlight relevance to the JD, but **DO NOT FABRICATE** experience.
+        - **CRITICAL**: Do NOT replace the tools/technologies the user actually used with ones from the JD unless they are generic synonyms(means they similar tools but different providers). 
+            - Example: If the user used "Faiss" and the JD asks for "Pinecone", change it to "Pinecone", because pinecone is a also vector database.
+            - Example: If the user worked in "Telecom", do NOT change it to "Healthcare" just because the JD is for a Healthcare company.
+        - **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs.
+            - Example: If the JD asks for "Data Analysis" and the user "looked at call logs", rewrite it as "Performed Data Analysis on call logs...".
+            --JD ask for communication skill, explain communication skills in projects
+        - If a specific requirement from the JD is totally missing from the user's experience, try to find relation withexisting experience clearly, and mention it, if no relation found then skip that point.
         - The output must be a JSON list of strings, where each string is a bullet point.
         - Do not include markdown formatting like ```json ... ``` or bullet characters inside the strings. Just the raw text of the point.
-        - Make the points punchy, impact-oriented, and keyword-rich.
+        - Make the points punchy, impact-oriented, and keyword-rich where truthful.
         - Should not include "*" or "-" etc. only plain text.
-        - Don't reduce the no of points, try to keep same number of points.
+        - Keep the same number of bullet points as the input.
         
         Example Output Format:
         ["Developed an ETL pipeline using Python...", "Optimized database queries decreasing load time by 30%...","second point"]

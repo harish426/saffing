@@ -46,15 +46,54 @@ export default function JobForm({ initialData, isEditMode = false }: JobFormProp
         }
     }, [initialData]);
 
+    const [downloadableResume, setDownloadableResume] = useState<{ base64: string, filename: string } | null>(null);
+
+    const handleDownload = () => {
+        if (!downloadableResume) return;
+
+        // Convert Base64 to Blob
+        const byteCharacters = atob(downloadableResume.base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = downloadableResume.filename;
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        // Disable button after download
+        setDownloadableResume(null);
+    };
+
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setDownloadableResume(null); // Reset previous download
 
         try {
             const result = await saveJobDescription(formData);
 
             if (result.success) {
-                if (result.emailResult && !result.emailResult.success) {
+                // Check if we received a downloadable resume
+                if (result.emailResult && result.emailResult.resumeBase64) {
+                    setDownloadableResume({
+                        base64: result.emailResult.resumeBase64,
+                        filename: result.emailResult.filename || "resume.docx"
+                    });
+                    alert("Entry saved! Resume is ready for download.");
+                }
+                else if (result.emailResult && !result.emailResult.success) {
                     alert("Data saved but email not sent. " + (result.emailResult.message || ""));
                 } else {
                     alert(isEditMode ? "Entry updated successfully!" : "Entry saved successfully!");
@@ -64,6 +103,13 @@ export default function JobForm({ initialData, isEditMode = false }: JobFormProp
                     router.push("/existing");
                 } else {
                     // Reset form only in create mode
+                    // BUT keep the ID if we want to allow editing? 
+                    // Actually standard behavior is reset. 
+                    // If we have a download, we might want to keep the form state or at least the download button active?
+                    // The user said: "after user download it just disable it again"
+                    // If I reset the form, the download button might disappear if it depends on form state? 
+                    // No, download button state is separate.
+
                     setFormData({
                         id: "",
                         company: "",
@@ -96,7 +142,33 @@ export default function JobForm({ initialData, isEditMode = false }: JobFormProp
     };
 
     return (
-        <form onSubmit={handleSubmit} className="card" style={{ padding: '3rem' }}>
+        <form onSubmit={handleSubmit} className="card" style={{ padding: '3rem', position: 'relative' }}>
+            {/* Download Resume Button (Only visible when resume is ready) */}
+            <button
+                type="button"
+                onClick={handleDownload}
+                disabled={!downloadableResume}
+                className="btn"
+                style={{
+                    position: "absolute",
+                    top: "1rem",
+                    right: "1rem",
+                    padding: "0.5rem 1rem",
+                    fontSize: "0.9rem",
+                    zIndex: 100,
+                    backgroundColor: downloadableResume ? "#22c55e" : "#52525b", // Green if ready, Gray if disabled
+                    color: "white",
+                    cursor: downloadableResume ? "pointer" : "not-allowed",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    transition: "all 0.2s"
+                }}
+            >
+                <span>⬇️</span>
+                {downloadableResume ? "Download Resume" : "Resume Not Ready"}
+            </button>
+
             <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                 {/* Left Column: Job Details */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

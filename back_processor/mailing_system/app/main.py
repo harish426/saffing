@@ -17,9 +17,16 @@ from app.core.logging_config import setup_logging
 setup_logging()
 logger = logging.getLogger(__name__)
 
-# Initialize services
-ai_service = GeminiService()
-vector_store = LocalFAISSStore()
+from functools import lru_cache
+
+# Initialize services lazily
+@lru_cache()
+def get_ai_service():
+    return GeminiService()
+
+@lru_cache()
+def get_vector_store():
+    return LocalFAISSStore()
 
 app = FastAPI()
 
@@ -121,8 +128,8 @@ async def process_and_send_emails():
                     for attempt in range(MAX_RETRIES):
                         try:
                             logger.info(f"Generating AI email for {application.jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
-                            relevant_context = vector_store.search(application.jobDescription, k=3)
-                            generated_body = ai_service.generate_email_body(application.jobRole, application.jobDescription, relevant_context)
+                            relevant_context = get_vector_store().search(application.jobDescription, k=3)
+                            generated_body = get_ai_service().generate_email_body(application.jobRole, application.jobDescription, relevant_context)
                             
                             if "Error" in generated_body:
                                 raise Exception(generated_body)
@@ -173,6 +180,9 @@ def send_remark(background_tasks: BackgroundTasks):
 
 @app.get("/send_resume")
 async def send_resume(request:Request):
+    from fastapi.responses import StreamingResponse
+    import io
+
     user_id = request.query_params.get("user_id")
     current_user = None
     if user_id:
@@ -189,9 +199,16 @@ async def send_resume(request:Request):
     vendorName=request.query_params.get("vendorName")
     vendorEmail=request.query_params.get("vendorEmail")
     
-    logger.info(f"Background Task Started: Processing Email for {vendorEmail}")
+    logger.info(f"Background Task Started: Processing Resume for {vendorEmail if vendorEmail else 'Download'}")
 
     try:
+        # Common Resume Generation Logic
+        # We need to generate the resume regardless of whether we send it or download it
+        # BUT for download, we might skip the email generation part if it's strictly just "tailor resume for JD"
+        # However, the current logic generates email body first. 
+        # For simplicity and adhering to "tailor resume according to jd", we can reuse the logic or extract it.
+        
+        # If vendorEmail is present -> Send Email
         if vendorEmail:
             # subject = f"Looking for AI/ML Engineer or Data Scientist role"
             # subject = f"Looking for {jobRole} role"
@@ -205,10 +222,10 @@ async def send_resume(request:Request):
                     logger.info(f"Generating AI email for {jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
                     # Fallback to jobRole if jobDescription is missing
                     search_query = jobDescription if jobDescription else jobRole
-                    relevant_context = vector_store.search(search_query, k=3)
+                    relevant_context = get_vector_store().search(search_query, k=3)
                     
                     # Use the new initial email generation method
-                    generated_body, jd_summary, job_requirements = ai_service.generate_initial_email_body(vendorName, jobRole, jobDescription, relevant_context)
+                    generated_body, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(vendorName, jobRole, jobDescription, relevant_context)
                     
                     if "Error" in generated_body: # Check if ai_service returned an error string
                          raise Exception(generated_body)
@@ -275,6 +292,55 @@ async def send_resume(request:Request):
             else:
                 logger.warning("Skipping email due to invalid body or error.")
                 return {"status": 404, "message": "Data saved but email not sent due to AI error"}
+
+        # If vendorEmail is MISSING -> Generate and Return Download
+        else:
+            logger.info("Vendor Email missing. Generating resume for download.")
+            
+            # For download, we might not need the full email generation, 
+            # BUT we DO need 'job_requirements' which comes from 'ai_service.generate_initial_email_body'
+            # or we need to extract that verification logic.
+            # To avoid duplicate logic, I'll call the AI service but ignore the email body.
+            
+            try:
+                search_query = jobDescription if jobDescription else jobRole
+                relevant_context = get_vector_store().search(search_query, k=3)
+                
+                # We reuse this to get job_requirements. 
+                # Ideally, we should refactor this to just get requirements if needed, 
+                # but 'generate_initial_email_body' does both.
+                # Assuming 'Vendor' can be generic if missing.
+                temp_vendor_name = vendorName if vendorName else "Hiring Manager"
+                
+                _, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(temp_vendor_name, jobRole, jobDescription, relevant_context)
+                
+                from app.services.generate_resume_docx import generate_resume_buffer
+                from app.core.database import get_latest_resume_for_user
+
+                with SessionLocal() as db:
+                    resume_entry = get_latest_resume_for_user(db, current_user.id)
+                    if not resume_entry or not resume_entry.resumeData:
+                        return {"status": "error", "message": "No resume data found."}
+                    resume_data = resume_entry.resumeData
+
+                resume_buffer = generate_resume_buffer(resume_data, jd_summary, job_requirements)
+                
+                if resume_buffer:
+                    # Reset buffer position to beginning
+                    resume_buffer.seek(0)
+                    filename = f"{user_name}_resume.docx"
+                    
+                    return StreamingResponse(
+                        resume_buffer,
+                        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                        headers={"Content-Disposition": f"attachment; filename={filename}"}
+                    )
+                else:
+                     return {"status": "error", "message": "Failed to generate resume buffer."}
+
+            except Exception as e:
+                logger.error(f"Error generating download resume: {e}", exc_info=True)
+                return {"status": "error", "message": str(e)}
 
     except Exception as e:
         logger.error(f"Error in send_resume: {e}", exc_info=True)
