@@ -6,7 +6,10 @@ import time
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from typing import List
-from app.utils.tools import Tools
+from app.utils.tools import Tools, UserContext
+from app.core.database import get_user_details
+
+
 
 load_dotenv()
 
@@ -16,21 +19,32 @@ class InitialEmailResponse(BaseModel):
     email_body: str
 
 class GeminiService:
+
     def __init__(self):
         self.api_key = os.getenv("GEMINI_API_KEY")
         if not self.api_key:
-            # print("Warning: GEMINI_API_KEY not found in environment variables.")
             pass
         else:
             self.client = genai.Client(api_key=self.api_key)
 
-    def generate_email_body(self, job_role: str, job_description: str, relevant_context: list[str]) -> str:
+    def generate_email_body(self, job_role: str, job_description: str, relevant_context: list[str], user_context: UserContext = None) -> str:
         """
         Generates a personalized email body using Gemini AI.
         """
         if not self.api_key:
             return "Error: Gemini API key not configured."
 
+        if user_context is None:
+            user_context = UserContext()
+
+        # Load the user's data into the tool context so Gemini tool calls return real values
+        Tools.set_user_context(
+            name=user_context.name,
+            email=user_context.email,
+            phone=user_context.phone,
+            linkedin_url=user_context.linkedin_url
+        )
+
         context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
         
         prompt = f"""
@@ -39,146 +53,195 @@ class GeminiService:
         Job Role: {job_role}
         
         Job Description:
-        {job_description[:2000]}  # Truncate to avoid token limits if necessary
+        {job_description[:2000]}
         
         Candidate's Resume Context (Matched from Vector Store):
         {context_str}
         
         Task:
-        Draft a concise, professional, and persuasive cold email body to the hiring manager/recruiter. 
+        Draft a concise, professional, and persuasive cold email body to the hiring manager/recruiter.
         - STRICTLY limit the body to exactly 3 sentences.
-        - Analyze the "Candidate's Resume Context" and "Job Description" to create a high-impact message.
+        - Analyze the resume context and job description to create a high-impact message.
         - Do not include the subject line in the output.
         - ABSOLUTELY NO HTML TAGS or <br>. Use actual newlines (\n) for line breaks.
-        - Separated sentences with a single newline.
-        - Do not include placeholders like "[Your Name]". The candidate's name is Harish Jamallamudi.
-        - Sign off exactly as follows (preceded by 2 newlines):
-        
-        Best regards,
-        Harish Jamallamudi
-        +13146696026
-        harishjamalladi@gmail.com
+        - Separate sentences with a single newline.
+
+        For the sign-off (preceded by 2 newlines):
+        - Call get_candidate_name() to get the candidate's name.
+        - Call get_candidate_phone() to get the phone number (include if available).
+        - Call get_candidate_email() to get the email address.
+        - Call get_candidate_linkedin() with requested=True ONLY if the job description
+          mentions LinkedIn or asks for a profile URL. Otherwise skip it.
+        - Format exactly as:
+            Best regards,
+            [name from tool]
+            [phone from tool, if any]
+            [email from tool]
+            [linkedin url from tool, if applicable]
         """
 
-        # try:
-        tools = [Tools.get_todays_date, Tools.calculate_experience, Tools.get_linkedin_profile, Tools.get_current_location]
+        tools = [
+            Tools.get_todays_date,
+            Tools.calculate_experience,
+            # Tools.get_current_location,
+            Tools.get_candidate_name,
+            Tools.get_candidate_email,
+            Tools.get_candidate_phone,
+            Tools.get_candidate_linkedin,
+        ]
         response = self.client.models.generate_content(
-            model="gemini-flash-latest", 
+            model="gemini-flash-latest",
             contents=prompt,
-            config=types.GenerateContentConfig(
-                tools=tools
-            )
+            config=types.GenerateContentConfig(tools=tools)
         )
         text_response = response.text
-        # Post-processing to ensure plain text
         if text_response:
-             text_response = text_response.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
-        
-        # Ensure sign-off separation
+            text_response = text_response.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
         if text_response and "Best regards," in text_response and "\n\nBest regards," not in text_response:
-             text_response = text_response.replace("Best regards,", "\n\nBest regards,")
+            text_response = text_response.replace("Best regards,", "\n\nBest regards,")
         return text_response if text_response else ""
-        # except Exception as e:
-        #     print(f"Error generating content with Gemini: {e}")
-        #     raise e # Re-raise for main.py to handle
 
 
-    def generate_initial_email_body(self, vendor_name: str, job_role: str, job_description: str, relevant_context: list[str]) -> tuple[str, str, list[str]]:
+    def generate_initial_email_body(self, vendor_name: str, job_role: str, job_description: str, relevant_context: list[str], user_context: UserContext = None) -> tuple[str, str, list[str]]:
         """
         Generates an initial contact email body, JD summary, and requirements list using Gemini AI.
+        Uses two separate Gemini calls:
+          - Phase 1: tool-calling call to generate email_body (so LinkedIn/phone/name are fetched dynamically)
+          - Phase 2: JSON-schema call to extract job_description_summary and job_requirements
         Returns: (email_body, job_description_summary, job_requirements)
         """
         if not self.api_key:
             return "Error: Gemini API key not configured.", "", []
 
+        if user_context is None:
+            user_context = UserContext()
+
+        # Load the user's data into tool context so all get_candidate_* tools return real values
+        Tools.set_user_context(
+            name=user_context.name,
+            email=user_context.email,
+            phone=user_context.phone,
+            linkedin_url=user_context.linkedin_url
+        )
+
         context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
-        
-        prompt = f"""
-        You are a professional assistant helping a candidate apply for a job.
-        
+
+        # ── PHASE 1: Email body — uses function calling tools ──────────────────
+        email_prompt = f"""
+        You are a professional assistant writing a cold job application email on behalf of a candidate.
+
         Job Role: {job_role}
-        Vendor Name: {vendor_name}
-        
+        Vendor/Recruiter Name: {vendor_name}
+
         Job Description:
         {job_description[:3000]}
-        
+
         Candidate's Resume Context:
         {context_str}
-        
+
         Instructions:
-        1. Analyze the Job Description and Candidate's Context.
-        2. Generate three things based on the following rules:
-            a. **job_description_summary**: A concise summary of the job description (max 3 sentences).
-            b. **job_requirements**: A list of STRICTLY technical skills, programming languages, databases, frameworks, and tools extracted from the JD (e.g., Python, SQL, PowerBI, AWS, React). Do NOT include soft skills, years of experience, or general duties.
-            
-            c. **email_body**: A cold email body to the vendor, which greet the vendor first (eg: Hi {vendor_name}, if his name is available following these rules:
-                - act behalf of Harish Jamallamudi and send this email to the vendor,not like a chatbot or a third person.
-                - STRICTLY limit the body to exactly 3 sentences.
-                - If the JD matches AI/ML/Data Science, write a persuasive pitch highlighting relevant experience.
-                - If the JD does NOT match well, politely request consideration for AI/ML/Data Science roles.
-                - If the JD is Data Engineering, explain the profile as a Data Engineer.
-                - ABSOLUTELY NO HTML TAGS or <br>. Use actual newlines (\n) for line breaks.
-                - Separated each sentence with a new line (\n).
-                - No subject line in the body.
-                - No placeholders.
-                - Sign off exactly as follows (preceded by 2 newlines):
-                    Best regards,
-                    Harish Jamallamudi
-                    +13146696026
-                    harishjamalladi@gmail.com
+        1. Write a 3-sentence cold email body:
+           - Greet the vendor (e.g. "Hi {vendor_name},").
+           - Write in first person as the candidate.
+           - Match the pitch to the JD (AI/ML/Data Science focus if relevant, Data Engineering if applicable, otherwise request consideration).
+           - No HTML tags, no subject line, no placeholders. Use \\n for line breaks.
+
+        2. Use your available tools to fill in any candidate information the JD requests.
+           - Call tools dynamically based on what the JD asks for — do not hardcode assumptions.
+           - Use resume context for fields like education/graduation details.
+           - If a field cannot be filled by any tool or the resume context, omit it entirely (do not leave a blank line).
+
+        3. Always end with a sign-off (preceded by 2 newlines):
+           Best regards,
+           [candidate name from tool]
+           [phone from tool, if available]
+           [email from tool]
+           [linkedin from tool, if available]
+
+        4. If the JD contains a structured candidate information form (a list of "Label: value" lines),
+           fill it using your tools and resume context, then append it after the sign-off.
+           Only include lines you can fill — skip lines you cannot.
+        """
+
+        contact_tools = [
+            Tools.get_todays_date,
+            Tools.calculate_experience,
+            # Tools.get_current_location,
+            Tools.get_candidate_name,
+            Tools.get_candidate_email,
+            Tools.get_candidate_phone,
+            Tools.get_candidate_linkedin,
+        ]
+
+        email_body = ""
+        try:
+            email_response = self.client.models.generate_content(
+                model="gemini-flash-latest",
+                contents=email_prompt,
+                config=types.GenerateContentConfig(tools=contact_tools)
+            )
+            email_body = email_response.text or ""
+            email_body = email_body.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
+            if "Best regards," in email_body and "\n\nBest regards," not in email_body:
+                email_body = email_body.replace("Best regards,", "\n\nBest regards,")
+        except Exception as e:
+            email_body = f"Error generating email: {e}"
+
+        # ── PHASE 2: JD summary + requirements — uses JSON schema ──────────────
+        analysis_prompt = f"""
+        Analyze the following job description and extract structured information.
+
+        Job Role: {job_role}
+
+        Job Description:
+        {job_description[:3000]}
+
+        Extract:
+        1. job_description_summary: A concise summary of the role and responsibilities (max 3 sentences).
+        2. job_requirements: A list of STRICTLY technical skills, programming languages, databases,
+           frameworks, and tools mentioned in the JD.
+           Do NOT include soft skills, years of experience, or generic duties.
         """
 
         max_retries = 3
         retry_delay = 2
+        jd_summary = ""
+        requirements = []
 
         for attempt in range(max_retries):
             try:
-                response = self.client.models.generate_content(
-                    model="gemini-flash-latest", 
-                    contents=prompt,
+                analysis_response = self.client.models.generate_content(
+                    model="gemini-flash-latest",
+                    contents=analysis_prompt,
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
                         response_schema=InitialEmailResponse
-                        # tools=tools
                     )
                 )
-                
-                # response.parsed should be an instance of InitialEmailResponse
-                data = response.parsed
-                
+                data = analysis_response.parsed
                 if not data:
-                    # Fallback if parsed isn't populated (rare with schema)
-                    import json
-                    json_data = json.loads(response.text)
-                    email_body = json_data.get("email_body", "")
+                    json_data = json.loads(analysis_response.text)
+                    jd_summary = json_data.get("job_description_summary", "")
+                    requirements = json_data.get("job_requirements", [])
                 else:
-                    email_body = data.email_body
-                # print(email_body)
-                # Post-processing cleanup
-                email_body = email_body.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
-                if "Best regards," in email_body:
-                    # Ensure double newline before sign-off
-                    parts = email_body.partition("Best regards,")
-                    if not parts[0].endswith("\n"):
-                         email_body = parts[0].strip() + "\n\n" + "Best regards," + parts[2]
-
-                return (
-                    email_body,
-                    data.job_description_summary if data else json_data.get("job_description_summary", ""),
-                    data.job_requirements if data else json_data.get("job_requirements", [])
-                )
+                    jd_summary = data.job_description_summary
+                    requirements = data.job_requirements
+                break
 
             except Exception as e:
-                # print(f"Attempt {attempt + 1} failed: {e}")
-                if "503" in str(e) or "429" in str(e): # Overloaded or Rate Limit
+                if "503" in str(e) or "429" in str(e):
                     if attempt < max_retries - 1:
                         import time
                         time.sleep(retry_delay)
-                        retry_delay *= 2 # Exponential backoff
+                        retry_delay *= 2
                         continue
-                return f"Error: {e}", "", []
-        
-        return "Error: Max retries exceeded.", "", []
+                jd_summary = ""
+                requirements = []
+                break
+
+        return email_body, jd_summary, requirements
+
+
 
 
     def get_Ai_Subject(self, job_role):

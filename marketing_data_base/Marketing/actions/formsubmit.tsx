@@ -80,7 +80,7 @@ export async function saveJobDescription(formData: any) {
                 },
             });
 
-            let emailResult: { success: boolean; data?: any; message?: any } = { success: false, message: 'Pending' };
+            let emailResult: { success: boolean; data?: any; message?: any; resumeBase64?: any; filename?: any } = { success: false, message: 'Pending' };
 
             emailResult = await sendResume({
                 vendorEmail: vendorEmail || '',

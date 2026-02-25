@@ -1,22 +1,13 @@
 # Stage 1: Builder
-FROM python:3.12-slim as builder
+# Uses pre-built base image with all deps already installed.
+# To rebuild the base (only needed when requirements.txt changes):
+#   docker build -f Dockerfile.base -t staffing-backend-base .
+FROM staffing-backend-base as builder
 
 WORKDIR /app
 
-# Install system dependencies required for building Python packages
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create a virtual environment
-RUN python -m venv /app/venv
-# Make sure we use the virtualenv:
+# Virtual environment is already set up in the base image
 ENV PATH="/app/venv/bin:$PATH"
-
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Runtime
 FROM python:3.12-slim
@@ -50,11 +41,11 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 # Expose the port
-EXPOSE 8001
+EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8001/ || exit 1
+  CMD curl -f http://localhost:8000/ || exit 1
 
 # Command to run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

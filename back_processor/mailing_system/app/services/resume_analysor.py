@@ -15,6 +15,7 @@ class PersonalInfo(BaseModel):
     title: str = Field(description="Professional Title like 'Sr. Data Scientist'")
     email: str = Field(description="Email Address")
     phone: str = Field(description="Phone Number")
+    linkedin: str = Field(description="LinkedIn Profile URL")
 
 class ProfessionalSummary(BaseModel):
     overview: str = Field(description="A paragraph summarizing professional experience")

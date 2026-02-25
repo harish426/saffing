@@ -13,44 +13,52 @@ export async function registerUser(formData: any) {
         return { error: "Missing required fields" };
     }
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-        where: { email },
-    });
+    try {
+        // Check if user exists
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
 
-    if (existingUser) {
-        return { error: "Email already in use" };
+        if (existingUser) {
+            return { error: "Email already in use" };
+        }
+
+        const hashedPassword = await hashPassword(password);
+
+        const newUser = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+            },
+        });
+
+        await createSession(newUser.id);
+        return { success: true };
+    } catch (err: any) {
+        console.error("Registration error:", err);
+        return { error: err?.message || "Registration failed. Please try again." };
     }
-
-    const hashedPassword = await hashPassword(password);
-
-    const newUser = await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: hashedPassword,
-        },
-    });
-
-    await createSession(newUser.id);
-    // Return success to let client handle transition
-    return { success: true };
 }
 
 export async function loginUser(formData: any) {
     const { email, password } = formData;
 
-    const user = await prisma.user.findUnique({
-        where: { email },
-    });
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
 
-    if (!user || !(await verifyPassword(password, user.password))) {
-        return { error: "Invalid credentials" };
+        if (!user || !(await verifyPassword(password, user.password))) {
+            return { error: "Invalid credentials" };
+        }
+
+        await createSession(user.id);
+        return { success: true };
+    } catch (err: any) {
+        console.error("Login error:", err);
+        return { error: err?.message || "Login failed. Please try again." };
     }
-
-    await createSession(user.id);
-    // Return success instead of redirecting to avoid try/catch issues
-    return { success: true };
 }
 
 

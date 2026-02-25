@@ -72,8 +72,8 @@ export async function replaceResume(formData: FormData) {
             });
             console.log("Triggered resume parsing for:", newResume.id);
         } catch (parseError) {
-             console.error("Failed to trigger resume parsing:", parseError);
-             // We don't fail the upload if parsing trigger fails, but we log it.
+            console.error("Failed to trigger resume parsing:", parseError);
+            // We don't fail the upload if parsing trigger fails, but we log it.
         }
 
         return { success: true };
@@ -88,13 +88,15 @@ export async function saveEmailSettings(formData: any) {
         const session = await verifySession();
         if (!session) return { error: "Unauthorized" };
 
-        const { jobEmail, appPassword } = formData;
+        const { jobEmail, appPassword, phoneNumber, linkedinUrl } = formData;
 
         await prisma.user.update({
             where: { id: session.id },
             data: {
                 jobEmail,
-                appPassword, // Note: Should be encrypted in production
+                appPassword,
+                phoneNumber,
+                linkedinUrl,
             },
         });
         return { success: true };
@@ -111,7 +113,7 @@ export async function getUserSettings() {
 
         const user = await prisma.user.findUnique({
             where: { id: session.id },
-            select: { jobEmail: true, appPassword: true, email: true }
+            select: { jobEmail: true, appPassword: true, email: true, phoneNumber: true, linkedinUrl: true }
         });
 
         // Also fetch resume info

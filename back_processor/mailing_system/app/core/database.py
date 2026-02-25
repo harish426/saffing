@@ -30,3 +30,7 @@ def get_latest_resume_for_user(db, user_id):
     """
     from app.models.models import Resume
     return db.query(Resume).filter(Resume.userId == user_id, Resume.resumeData.isnot(None)).order_by(Resume.createdAt.desc()).first()
+
+def get_user_details(db, user_id):
+    from app.models.models import User
+    return db.query(User).filter(User.id == user_id).first()

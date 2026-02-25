@@ -7,7 +7,7 @@ from app.utils.read_data import read_data
 # from ai_services import get_Ai_Subject
 from app.services.email_services import mail
 from app.services.ai_services import GeminiService
-from app.utils.vectorestore import LocalFAISSStore
+from app.utils.tools import UserContext
 import concurrent.futures
 from fastapi import Request
 from app.models.models import User
@@ -24,9 +24,9 @@ from functools import lru_cache
 def get_ai_service():
     return GeminiService()
 
-@lru_cache()
-def get_vector_store():
-    return LocalFAISSStore()
+# @lru_cache()
+# def get_vector_store():
+#     return LocalFAISSStore()
 
 app = FastAPI()
 
@@ -198,10 +198,33 @@ async def send_resume(request:Request):
     jobDescription=request.query_params.get("jobDescription")
     vendorName=request.query_params.get("vendorName")
     vendorEmail=request.query_params.get("vendorEmail")
+
+    # Build dynamic user context for AI sign-off
+    user_ctx = UserContext(
+        name=current_user.name or "",
+        email=current_user.jobEmail or current_user.email or "",
+        phone=current_user.phoneNumber or "",
+        linkedin_url=current_user.linkedinUrl or "",
+    )
     
     logger.info(f"Background Task Started: Processing Resume for {vendorEmail if vendorEmail else 'Download'}")
 
     try:
+
+
+        from app.core.database import get_latest_resume, get_latest_resume_for_user
+
+        # gets the resume data from the database
+        with SessionLocal() as db:
+            # resume_entry = get_latest_resume(db)
+            resume_entry = get_latest_resume_for_user(db, current_user.id)
+            
+            if not resume_entry or not resume_entry.resumeData:
+                logger.error(f"Error: No resume data found in database for user {current_user.id}.")
+                return {"status": "error", "message": "No resume data found in database."}
+                
+            resume_data = resume_entry.resumeData
+
         # Common Resume Generation Logic
         # We need to generate the resume regardless of whether we send it or download it
         # BUT for download, we might skip the email generation part if it's strictly just "tailor resume for JD"
@@ -221,11 +244,11 @@ async def send_resume(request:Request):
                 try:
                     logger.info(f"Generating AI email for {jobRole} (Attempt {attempt + 1}/{MAX_RETRIES})...")
                     # Fallback to jobRole if jobDescription is missing
-                    search_query = jobDescription if jobDescription else jobRole
-                    relevant_context = get_vector_store().search(search_query, k=3)
+                    # search_query = jobDescription if jobDescription else jobRole
+                    # relevant_context = get_vector_store().search(search_query, k=3)
                     
                     # Use the new initial email generation method
-                    generated_body, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(vendorName, jobRole, jobDescription, relevant_context)
+                    generated_body, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(vendorName, jobRole, jobDescription, resume_data, user_ctx)
                     
                     if "Error" in generated_body: # Check if ai_service returned an error string
                          raise Exception(generated_body)
@@ -259,18 +282,7 @@ async def send_resume(request:Request):
                 
                 # base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 # json_source = os.path.join(base_dir, "data", "resume", "resume.json")
-                from app.core.database import get_latest_resume, get_latest_resume_for_user
-
-                #gets the resume data from the database
-                with SessionLocal() as db:
-                    # resume_entry = get_latest_resume(db)
-                    resume_entry = get_latest_resume_for_user(db, current_user.id)
-                    
-                    if not resume_entry or not resume_entry.resumeData:
-                        logger.error(f"Error: No resume data found in database for user {current_user.id}.")
-                        return {"status": "error", "message": "No resume data found in database."}
-                        
-                    resume_data = resume_entry.resumeData
+                
 
                 resume_buffer = generate_resume_buffer(resume_data, jobDescription, job_requirements)
                 
@@ -315,13 +327,6 @@ async def send_resume(request:Request):
                 _, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(temp_vendor_name, jobRole, jobDescription, relevant_context)
                 
                 from app.services.generate_resume_docx import generate_resume_buffer
-                from app.core.database import get_latest_resume_for_user
-
-                with SessionLocal() as db:
-                    resume_entry = get_latest_resume_for_user(db, current_user.id)
-                    if not resume_entry or not resume_entry.resumeData:
-                        return {"status": "error", "message": "No resume data found."}
-                    resume_data = resume_entry.resumeData
 
                 resume_buffer = generate_resume_buffer(resume_data, jd_summary, job_requirements)
                 

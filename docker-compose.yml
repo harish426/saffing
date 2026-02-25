@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # ─── Backend (FastAPI mailing system) ───────────────────────────────────────
+  backend:
+    build: ./back_processor/mailing_system
+    container_name: staffing-backend
+    ports:
+      - "8001:8000"          # 8001 on host → 8000 inside container
+    env_file:
+      - ./back_processor/mailing_system/.env
+    restart: unless-stopped
+
+  # ─── Frontend (Next.js marketing app) ───────────────────────────────────────
+  frontend:
+    build: ./marketing_data_base/Marketing
+    container_name: marketing_frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./marketing_data_base/Marketing/.env
+    environment:
+      - HOSTNAME=0.0.0.0
+      # Docker internal DNS: "backend" resolves to the backend container above.
+      # Port 8000 = internal container port (not the 8001 host-mapped port).
+      - BACKEND_URL=http://backend:8000
+    depends_on:
+      - backend
+    restart: always

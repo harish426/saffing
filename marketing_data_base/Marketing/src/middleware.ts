@@ -14,9 +14,9 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
-    if (path === '/' && sessionToken) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+    // NOTE: We intentionally do NOT redirect logged-in users away from '/'
+    // because the signup flow is multi-step and creates a session after Step 1.
+    // The page component itself handles redirect to /dashboard if already logged in.
 
     return NextResponse.next();
 }

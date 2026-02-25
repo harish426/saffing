@@ -56,28 +56,37 @@ class Resume:
         title = info.get("title", "")
         email = info.get("email", "")
         phone = info.get("phone", "")
+        linkedin = info.get("linkedin", "")
 
         # Name
-        p_name = self.doc.add_paragraph()
-        p_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        run_name = p_name.add_run(name)
-        self.set_font(run_name, size=22, bold=True)
+        if name:
+            p_name = self.doc.add_paragraph()
+            p_name.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run_name = p_name.add_run(name)
+            self.set_font(run_name, size=22, bold=True)
         
         # Title
-        p_title = self.doc.add_paragraph()
-        p_title.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        run_title = p_title.add_run(title)
-        self.set_font(run_title, size=12, color=RGBColor(80, 80, 80)) # Dark Gray
+        if title:
+            p_title = self.doc.add_paragraph()
+            p_title.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run_title = p_title.add_run(title)
+            self.set_font(run_title, size=12, color=RGBColor(80, 80, 80)) # Dark Gray
 
         # Contact
-        p_contact = self.doc.add_paragraph()
-        p_contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        contact_text = f"{phone} | {email}"
-        run_contact = p_contact.add_run(contact_text)
-        self.set_font(run_contact, size=10)
+        if phone or email or linkedin:
+            p_contact = self.doc.add_paragraph()
+            p_contact.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            contact_text = " | ".join(p for p in [phone, email, linkedin] if p)
+            run_contact = p_contact.add_run(contact_text)
+            self.set_font(run_contact, size=10)
+
+        
 
     def add_summary(self, job_description):
+
         summary = self.data.get("professional_summary", {})
+        if summary.get("overview", "") == "" and summary.get("key_highlights", []) == []:
+            return
         self.add_section_heading("Professional Summary")
         
         overview = summary.get("overview", "")
@@ -106,7 +115,7 @@ class Resume:
 
     def add_education(self):
         edu = self.data.get("education", {})
-        if edu:
+        if edu and edu.get("degree")!="":
             self.add_section_heading("Education")
             degree = edu.get("degree", "")
             inst = edu.get("institution", "")
@@ -150,6 +159,8 @@ class Resume:
                 self.set_font(run_skills, size=10)
 
     def _add_job_entry(self, job):
+        if job.get("client", "") == "" and job.get("role", "") == "":
+            return
         client = job.get("client", "")
         role = job.get("role", "")
         duration = job.get("duration", "")
@@ -195,6 +206,8 @@ class Resume:
         self.doc.add_paragraph() 
 
     def add_experience_part_one(self, job_description):
+        if self.data.get("professional_experience", []) == []:
+            return
         experience = self.data.get("professional_experience", [])
         if experience:
             # Force new page for Experience as requested -- REMOVED per user feedback
@@ -258,6 +271,8 @@ class Resume:
         self.doc.save(output_path)
 
     def add_projects(self):
+        if self.data.get("projects",[]) == []:
+            return
         projects =self.data.get("projects",[])
         if projects:
             self.add_section_heading("Projects")
@@ -285,6 +300,8 @@ class Resume:
         self.doc.add_paragraph() 
     
     def add_certifications(self):
+        if self.data.get("certifications", []) == [] or self.data.get("certifications", []) == {}:
+            return
         certifications = self.data.get("certifications", [])
         if certifications:
             self.add_section_heading("Certifications")

@@ -1,9 +1,9 @@
 fastapi
 uvicorn
 sqlalchemy
+psycopg2-binary
 psycopg[binary]
 python-dotenv
-faiss-cpu
 sentence-transformers
 google-genai
 pypdf

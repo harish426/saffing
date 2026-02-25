@@ -18,6 +18,8 @@ export default function SettingsMenu() {
     const [formData, setFormData] = useState({
         jobEmail: '',
         appPassword: '',
+        phoneNumber: '',
+        linkedinUrl: '',
     });
 
     const [passwordData, setPasswordData] = useState({
@@ -37,7 +39,9 @@ export default function SettingsMenu() {
             if (result.success && result.data) {
                 setFormData({
                     jobEmail: result.data.jobEmail || result.data.email || '',
-                    appPassword: result.data.appPassword || ''
+                    appPassword: result.data.appPassword || '',
+                    phoneNumber: result.data.phoneNumber || '',
+                    linkedinUrl: result.data.linkedinUrl || '',
                 });
                 if (result.data.resume) {
                     setResumeInfo({
@@ -272,6 +276,32 @@ export default function SettingsMenu() {
                                                     value={formData.jobEmail}
                                                     onChange={handleChange}
                                                     placeholder="jobs@example.com"
+                                                    style={{ padding: '0.5rem' }}
+                                                />
+                                            </div>
+
+                                            <div className="input-group" style={{ marginBottom: '1rem' }}>
+                                                <label className="label" style={{ fontSize: '0.8rem' }}>Phone Number</label>
+                                                <input
+                                                    type="tel"
+                                                    name="phoneNumber"
+                                                    className="input"
+                                                    value={formData.phoneNumber}
+                                                    onChange={handleChange}
+                                                    placeholder="+1 (555) 000-0000"
+                                                    style={{ padding: '0.5rem' }}
+                                                />
+                                            </div>
+
+                                            <div className="input-group" style={{ marginBottom: '1rem' }}>
+                                                <label className="label" style={{ fontSize: '0.8rem' }}>LinkedIn URL <span style={{ color: '#71717a', fontWeight: 400 }}>(optional)</span></label>
+                                                <input
+                                                    type="url"
+                                                    name="linkedinUrl"
+                                                    className="input"
+                                                    value={formData.linkedinUrl}
+                                                    onChange={handleChange}
+                                                    placeholder="https://linkedin.com/in/yourprofile"
                                                     style={{ padding: '0.5rem' }}
                                                 />
                                             </div>

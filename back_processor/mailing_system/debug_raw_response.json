@@ -1,233 +1,283 @@
 {
   "personal_info": {
-    "name": "Harish Jamallamudi",
-    "title": "AI Engineer",
-    "email": "harishjamallamudi888@gmail.com",
-    "phone": "3145996836"
+    "name": "HARISH JAMALLAMUDI",
+    "title": "Sr. AI Engineer/Data Scientist",
+    "email": "harishjamalladi@gmail.com",
+    "phone": "314-669-6026"
   },
   "professional_summary": {
-    "overview": "AI Engineer with hands-on experience integrating AI solutions into scalable applications and optimizing machine learning workflows. Proficient in Python, CI/CD pipelines, and cloud deployment on Azure, with a strong foundation in deep learning and computer vision. Adept at collaborating across functions to develop innovative, end-to-end AI systems and automate complex workflows.",
+    "overview": "Senior Data Scientist with 11+ years of experience, including 8 years in Data Science and 3 years in Data Engineering, specializing in designing and deploying AI-driven solutions. Proven expertise in Machine Learning, Deep Learning, NLP, and predictive analytics, with hands-on experience in MLOps, model operationalization, and real-time anomaly detection. Adept at building scalable end-to-end ML pipelines, optimizing forecasting systems, and delivering innovation-led business insights that drive measurable outcomes.",
     "key_highlights": [
-      "Integrating AI solutions into scalable applications and optimizing machine learning workflows.",
-      "Proficient in Python, CI/CD pipelines, and cloud deployment on Azure and AWS.",
-      "Developing innovative end-to-end AI systems and automating complex workflows.",
-      "Strong foundation in deep learning and computer vision for real-world applications.",
-      "Adept at collaborating across functions to deliver high-impact AI solutions.",
-      "Designing secure Retrieval-Augmented Generation (RAG) architectures for sensitive data.",
-      "Orchestrating distributed AI workloads using Ray for high-throughput inference.",
-      "Implementing full-stack observability for monitoring LLM and system performance."
+      "Developed production-grade applications using Python, specializing in clean and optimized code for scalable AI and machine learning solutions.",
+      "Architected cross-functional solutions in machine learning, data engineering, and intelligent automation to improve business efficiency.",
+      "Translated complex data science methodologies into actionable strategies by applying advanced ML and AI techniques for decision-making accuracy.",
+      "Utilized predictive modeling and regression techniques to extract actionable business insights for key stakeholders.",
+      "Applied data mining and advanced statistical interpretation to solve complex business challenges through proactive exploratory data analysis.",
+      "Optimized machine learning models across diverse frameworks and deployment methodologies to ensure architectural adaptability.",
+      "Designed and deployed real-time anomaly detection systems to improve data quality and proactively identify business risks.",
+      "Built and automated end-to-end forecasting pipelines to accelerate demand prediction and drive operational planning value.",
+      "Applied Proximal Policy Optimization (PPO) to drive dynamic reorder optimization, significantly reducing inventory holding costs.",
+      "Leveraged transfer learning and pre-trained Transformer models integrated with LSTMs to optimize time-series forecasting accuracy.",
+      "Developed Generative AI solutions using GPT and LLaMA models, implementing prompt engineering and fine-tuning techniques.",
+      "Built Retrieval-Augmented Generation (RAG) systems to enhance LLM responses using external knowledge sources and Model Context Protocols.",
+      "Applied LoRA-based efficient fine-tuning techniques to optimize LLM performance and inference efficiency with minimal overhead.",
+      "Streamlined model selection and hyperparameter tuning using AutoML to accelerate project timelines from conception to deployment.",
+      "Developed advanced recommender systems using collaborative filtering to drive personalization and increase business value.",
+      "Engineered multi-agent Deep Q-Learning strategies to optimize pricing decisions and drive measurable revenue increases.",
+      "Managed cloud infrastructure as code using Terraform to ensure scalable model deployment and infrastructure consistency.",
+      "Optimized AI solution scalability and cost-efficiency through extensive experience with serverless deployment on cloud platforms.",
+      "Spearheaded the integration of Natural Language Processing for real-time market reaction and competitive intelligence.",
+      "Uncovered actionable insights using advanced statistical analyses, A/B testing, and clustering techniques.",
+      "Developed executive-level visualizations and dashboards to communicate complex findings to non-technical stakeholders.",
+      "Collaborated effectively within technical teams using Git version control to ensure robust code management.",
+      "Adopted emerging data technologies like Apache Spark for large-scale AI workloads and distributed data processing.",
+      "Managed end-to-end AI deployment on AWS, leveraging SageMaker, Lambda, and EKS to drive business-critical solutions.",
+      "Applied Computer Vision and Deep Learning techniques for object recognition to transform visual data into actionable strategies.",
+      "Performed query optimization and performance tuning in SQL to ensure high-performance data retrieval for model training.",
+      "Developed interactive dashboards using Shiny and R to translate machine learning forecasts into accessible business tools.",
+      "Maintained high standards of collaboration and version control using GIT and GitHub to manage complex AI project lifecycles."
     ]
   },
   "education": {
-    "degree": "Master\u2019s, Computer Science",
-    "institution": "Saint Louis University",
-    "location": "Saint Louis, US"
+    "degree": "",
+    "institution": "",
+    "location": ""
   },
   "technologies": [
     {
-      "category": "Programming and Frameworks",
+      "category": "Programming Languages",
       "skills": [
-        "Java",
-        "Spring Boot",
         "Python",
-        "C++",
-        "R",
-        "JavaScript",
         "SQL",
-        "Solidity",
-        "NodeJS",
-        "AngularJS",
+        "R"
+      ]
+    },
+    {
+      "category": "Data Science & Machine Learning",
+      "skills": [
+        "Scikit-learn",
+        "Pandas",
+        "NumPy",
+        "XGBoost",
+        "Random Forest",
+        "Logistic Regression",
+        "K-Means",
+        "DBSCAN",
+        "PCA",
+        "SHAP"
+      ]
+    },
+    {
+      "category": "Deep Learning & AI",
+      "skills": [
         "TensorFlow",
         "PyTorch",
-        "Keras",
-        "FastAPI",
-        "Next.js/React",
-        "NumPy",
-        "Pandas",
-        "OpenCV"
+        "LSTM",
+        "Transformers",
+        "CNN",
+        "CLIP",
+        "Whisper",
+        "Wav2Vec 2.0"
       ]
     },
     {
-      "category": "MLOps and Tools",
+      "category": "Generative AI & LLMs",
       "skills": [
+        "GPT",
+        "LLaMA",
+        "Mistral",
+        "LangChain",
+        "RAG",
+        "Prompt Engineering",
+        "Pinecone",
+        "Weaviate"
+      ]
+    },
+    {
+      "category": "Big Data & Engineering",
+      "skills": [
+        "Apache Spark",
+        "PySpark",
+        "Spark Streaming",
+        "Hadoop",
+        "DVC"
+      ]
+    },
+    {
+      "category": "Cloud & DevOps",
+      "skills": [
+        "AWS (SageMaker, Lambda, EKS, EMR, Redshift)",
+        "Kubernetes",
+        "Docker",
+        "Terraform",
         "Git",
         "GitHub",
-        "Jenkins (CI/CD)",
-        "CircleCI",
-        "Docker",
-        "Kubernetes (Container Orchestration)",
-        "Terraform (IaC)",
-        "Azure AI Foundry",
-        "JUnit"
+        "CI/CD",
+        "MLflow",
+        "TFX",
+        "Apache Airflow",
+        "Ray"
       ]
     },
     {
-      "category": "Computer Vision and Techniques",
+      "category": "Visualization & Tools",
       "skills": [
-        "SIFT",
-        "SURF",
-        "Light-Field Dynamic Homography (LDH)",
-        "Feature Matching",
-        "Image Stitching",
-        "Real-time Simulation (AirSim)"
-      ]
-    },
-    {
-      "category": "Relevant Courses and Concepts",
-      "skills": [
-        "Machine Learning",
-        "Deep Learning",
-        "Computer Vision",
-        "MLOps",
-        "LLMs (Large Language Models)",
-        "Natural Language Processing",
-        "Full-stack Development",
-        "Data Structures & Algorithms",
-        "Probability and Statistics"
+        "Power BI",
+        "Tableau",
+        "Shiny",
+        "Matplotlib",
+        "Seaborn",
+        "Prometheus",
+        "Grafana"
       ]
     }
   ],
   "professional_experience": [
     {
       "client": "Charter Communications",
-      "location": "St. Louis, US",
-      "role": "AI Engineer",
-      "duration": "March 2025 - present",
+      "location": "St. Louis, MO",
+      "role": "GenAI/AI Engineer",
+      "duration": "Jan 2025 - Present",
       "responsibilities": [
-        "Engineered secure Retrieval-Augmented Generation (RAG) architectures using LangChain and AWS Bedrock, enabling real-time retrieval of operational data restricted by fine-grained user access levels.",
-        "Built low-latency vector retrieval layers in Python using FAISS and Pinecone, incorporating security-aware meta-data filtering to ensure data privacy and compliance across internal troubleshooting guides.",
-        "Developed Agent Assist intelligence that surfaces context-aware recommendations to service providers based on specific authorization profiles, improving support accuracy and organizational security.",
-        "Optimized and deployed open-source LLMs like Llama 2 and Mistral within internal AI workflows, implementing data isolation protocols for automated call summarization and sensitive query resolution.",
-        "Provisioned and managed cloud-native infrastructure using Terraform and AWS EKS, enforcing strict authentication with AWS IAM and Secrets Manager to safeguard sensitive enterprise data and operational secrets.",
-        "Orchestrated distributed AI workloads using Python and Ray on AWS, delivering high-throughput, low-latency inference for large-scale summarization and knowledge synthesis across multi-tenant datasets.",
-        "Established full-stack observability with Prometheus, Grafana, and Evidently AI to monitor system latency, retrieval performance, and LLM response quality within a secured production environment.",
-        "Automated the end-to-end ML lifecycle using MLflow, DVC, and Apache Airflow, coordinating secure data ingestion and versioning to ensure reproducibility and audit compliance for internal AI services."
+        "Designed and implemented enterprise-grade Generative AI architectures using RAG and LangChain for real-time knowledge retrieval.",
+        "Built high-performance AI solutions and vector retrieval layers using Pinecone and Weaviate for semantic search.",
+        "Developed, trained, and optimized deep learning models by fine-tuning open-source LLMs like LLaMA2 and Mistral.",
+        "Proactively built multi-agent systems and Agent Assist intelligence to deliver context-aware AI recommendations.",
+        "Translated complex NLP methodologies into actionable insights by implementing transformer-based pipelines for structured summaries.",
+        "Deployed and optimized AI models for production using high-throughput serving infrastructures on distributed EKS clusters.",
+        "Orchestrated distributed AI workloads using Ray to conduct large-scale knowledge synthesis from enterprise data.",
+        "Communicated system performance and model quality to stakeholders through observability dashboards using Prometheus and Grafana.",
+        "Optimized Generative AI performance through prompt lifecycle management and A/B testing to ensure business alignment.",
+        "Integrated AI observability and explainability metrics into operational dashboards to monitor model drift and impact.",
+        "Automated dataset provenance and versioning with DVC to ensure reproducibility for AI model retraining cycles.",
+        "Developed multimodal AI workflows combining Computer Vision and NLP models like CLIP and Whisper for business artifacts.",
+        "Engineered end-to-end ETL and ML orchestration pipelines using Apache Airflow for data ingestion.",
+        "Delivered secure LLM API services and AI solutions via cloud-native technologies with robust authentication.",
+        "Managed and scaled cloud-native infrastructure using Kubernetes and Terraform for horizontal scaling of AI workloads.",
+        "Drove AI projects from conception to deployment by optimizing CI/CD pipelines to automate container builds.",
+        "Systematized the ML lifecycle and governance using TFX and MLflow to ensure AI solutions meet production standards.",
+        "Enabled proactive batch processing and automated classification of large-scale datasets for data-informed decision-making.",
+        "Facilitated collaborative experimentation and rapid prototyping of advanced AI models in high-compute environments."
       ]
     },
     {
-      "client": "Saint Louis University",
-      "location": "Saint Louis, US",
-      "role": "Graduate Research Assistant and Teaching Assistant",
-      "duration": "May 2024 - May 2025",
+      "client": "Mastercard",
+      "location": "St Louis, MO",
+      "role": "Sr. Data Scientist",
+      "duration": "June 2022 to Dec 2024",
       "responsibilities": [
-        "Engineered and optimized high-throughput data pipelines for Wide-Area Motion Imagery (WAMI) and event camera research; automated the ingestion, cleaning, and preprocessing of high-volume virtual environment data (Unreal Engine/CARLA) using NumPy and Pandas.",
-        "Designed and implemented a proprietary multi-drone image stitching solution for thesis work, utilizing Light Field Dynamic Homography (LDH). Employed advanced feature matching techniques (SIFT/SURF) and integrated the computer vision pipeline with Keras and Transformers for high-resolution panoramic generation.",
-        "Developed scalable data evaluation frameworks and optimized model deployment and inference across research projects using C++, Python, R, and Matlab, demonstrating proficiency in low-level computational efficiency critical for real-time WAMI and drone swarm coordination.",
-        "Collaborated with interdisciplinary research teams to document experimental results and present technical findings in academic forums.",
-        "Mentored undergraduate students in computer science fundamentals, including data structures, algorithms, and Python programming.",
-        "Configured and maintained high-performance computing (HPC) environments for distributed machine learning training sessions.",
-        "Developed custom scripts to automate the labeling and validation of synthetic datasets generated from CARLA simulations.",
-        "Assisted in the grading and instruction of graduate-level courses focused on artificial intelligence and machine learning principles."
+        "Managed large-scale fraud analytics platforms using Big Data and cloud architectures to transform transactional data into strategies.",
+        "Designed and developed advanced AI models using machine learning to identify behavioral patterns for fraud prevention.",
+        "Optimized inference performance by building low-latency risk scoring models using ensemble learning for real-time decisioning.",
+        "Engineered high-quality behavioral features from clickstream data to translate interactions into data-driven insights.",
+        "Developed innovative temporal and sequential features to capture deviations in customer behavior for early detection.",
+        "Applied deep learning and Transformer-based architectures to model sequential behavior and improve accuracy.",
+        "Integrated Generative AI and representation learning techniques to identify novel fraud patterns.",
+        "Developed advanced AI solutions using graph-based features and network analytics to uncover coordinated fraud rings.",
+        "Optimized machine learning models by addressing extreme class imbalance to maximize precision-recall metrics.",
+        "Led extensive feature engineering and preprocessing using Scikit-learn pipelines to ensure modeling consistency.",
+        "Built end-to-end machine learning pipelines on AWS SageMaker for large-scale data ingestion and training.",
+        "Collaborated with technical teams using AWS SageMaker Studio for experimentation and benchmarking of AI use cases.",
+        "Deployed scalable AI solutions and real-time inference services using AWS Lambda for cost-efficient decisioning.",
+        "Leveraged AWS EMR and Redshift to support distributed processing for broad AI and deep learning workloads.",
+        "Developed advanced NLP pipelines to process customer service interactions and transform audio into text.",
+        "Translated complex NLP data into actionable insights by identifying behavioral signals within transcripts.",
+        "Integrated Explainable AI (XAI) using SHAP to interpret model predictions and communicate findings to stakeholders.",
+        "Built monitoring frameworks to track accuracy and performance across production AI deployments.",
+        "Implemented proactive model drift detection using Statistical Process Control to ensure long-term reliability.",
+        "Designed and maintained dimensional data marts to support large-scale AI analytics and data-driven strategies.",
+        "Streamlined the deployment of AI models by developing CI/CD pipelines, reducing time-to-market by 30%.",
+        "Developed clear and compelling executive dashboards in Power BI to communicate fraud trends and AI impact.",
+        "Collaborated with cross-functional stakeholders to translate business requirements into scalable machine learning solutions.",
+        "Applied business acumen to support investigations through root-cause analysis of model anomalies and fraud spikes.",
+        "Ensured responsible AI deployment by monitoring bias and validating model behavior in compliance with data governance."
       ]
     },
     {
-      "client": "Somish Blockchain Labs",
-      "location": "New Delhi, India",
-      "role": "Software Engineer",
-      "duration": "Dec 2021 - Jun 2023",
+      "client": "Nexteraenergy",
+      "location": "Florida",
+      "role": "Sr. Data Scientist",
+      "duration": "Oct 2020 to May 2022",
       "responsibilities": [
-        "Developed and deployed a high-performance product recommendation engine for e-commerce, implementing Singular Value Decomposition and Factorization Machines to enhance user personalization and engagement metrics.",
-        "Architected end-to-end ETL pipelines using Databricks and Apache Spark to process high-throughput data streams, ensuring seamless data ingestion from diverse sources into a centralized lakehouse for downstream modeling.",
-        "Performed rigorous Exploratory Data Analysis (EDA) and built interactive data visualization dashboards to identify consumer behavior patterns, utilizing statistical insights to refine feature engineering and model accuracy.",
-        "Established robust MLOps workflows by integrating MLflow for experiment tracking and Jenkins for CI/CD, automating the model lifecycle from initial training to production deployment on cloud infrastructure.",
-        "Optimized backend microservices using Java and Spring Boot to serve real-time model inferences, utilizing Docker containerization and Terraform for scalable resource provisioning across AWS and Azure environments.",
-        "Collaborated with blockchain developers to integrate smart contract event data into machine learning models for fraud detection.",
-        "Improved system reliability by implementing comprehensive unit and integration tests for recommendation engine microservices.",
-        "Participated in sprint planning and code reviews to maintain high standards of code quality and architectural integrity."
+        "Partnered with business teams to translate utility challenges into data science problems such as customer retention.",
+        "Performed exploratory data analysis on large-scale customer and usage datasets to uncover engagement drivers.",
+        "Built automated ETL pipelines to clean and integrate data from multiple source systems for consistent analytics.",
+        "Designed dimensional data models to support high-performance reporting and leadership dashboards.",
+        "Developed executive dashboards tracking operational KPIs and financial metrics to reduce manual effort.",
+        "Implemented Logistic Regression and Regularized Linear Models to explain drivers behind customer attrition.",
+        "Built Tree-based ensemble models such as Random Forest and XGBoost to improve prediction accuracy for retention.",
+        "Used Hyperparameter tuning and cross-validation to optimize performance and prevent overfitting.",
+        "Applied Time Series models like ARIMA and Seasonal ARIMA to analyze trends and seasonality in usage metrics.",
+        "Implemented Clustering algorithms to segment customers based on usage patterns and engagement levels.",
+        "Used Principal Component Analysis (PCA) to reduce dimensionality and improve model stability.",
+        "Developed Naive Bayes and Support Vector Machine models for critical classification and prediction tasks.",
+        "Contributed to a recommendation engine for suggesting relevant customer services based on usage profiles.",
+        "Performed model evaluation using ROC-AUC, precision-recall, and confusion matrices for business reliability.",
+        "Conducted statistical hypothesis testing to measure the impact of customer programs and operational changes.",
+        "Analyzed customer feedback text using TF-IDF and n-grams for effective NLP-driven insights.",
+        "Ensured data quality by detecting anomalies and inconsistencies that could impact analytics outcomes.",
+        "Used cloud-based compute environments to scale model training and data processing workloads efficiently.",
+        "Built and deployed Dockerized microservices for ML models to enable scalable, low-latency inference.",
+        "Implemented CI/CD pipelines for automated deployment and version control of analytics solutions.",
+        "Collaborated with data engineers to deploy analytics datasets into production reporting environments.",
+        "Participated in Agile delivery cycles, refining models based on stakeholder feedback and new data."
       ]
     },
     {
-      "client": "Verzo Private. Lmt",
-      "location": "Bengaluru, India",
-      "role": "Software Developer",
-      "duration": "Jun 2021-Aug 2021",
+      "client": "US Bank",
+      "location": "Irving, Texas",
+      "role": "Data Scientist",
+      "duration": "June 2018 to Sep 2020",
       "responsibilities": [
-        "Developed and delivered two data-centric web applications (Parking Information System and Event Management Platform) using a full-stack approach including HTML, CSS, JavaScript, AngularJS, PHP, and Java Servlets.",
-        "Established and managed underlying SQL databases, implementing efficient data retrieval methods and setting up basic web-based data pipelines, showcasing foundational experience in real-time data handling.",
-        "Fully developed the Event Management Web Application remotely, demonstrating strong independent development skills and the ability to deliver complex, responsive solutions from front-end to back-end.",
-        "Designed and refined user interface components to improve accessibility and user engagement across web platforms.",
-        "Collaborated with senior developers to troubleshoot and resolve backend logical errors and database bottlenecks.",
-        "Drafted comprehensive technical documentation and user manuals for the newly developed Parking Information System.",
-        "Implemented secure user authentication and authorization modules using session management and encrypted credentials.",
-        "Conducted thorough testing of application features across multiple browsers to ensure cross-platform compatibility."
+        "Performed detailed exploratory data analysis using statistical techniques to engineer high-impact features.",
+        "Built and evaluated machine learning models using Python libraries including Pandas, NumPy, and Scikit-learn.",
+        "Developed credit risk and scoring models using Logistic Regression, Random Forests, and XGBoost.",
+        "Executed customer segmentation using K-Means and DBSCAN to enable targeted marketing campaigns.",
+        "Designed and implemented customer churn prediction pipelines to identify high-risk customers for retention.",
+        "Built personalized recommendation engines combining collaborative filtering with XGBoost ranking models.",
+        "Implemented fraud detection workflows using Isolation Forests to identify irregular billing patterns.",
+        "Developed time-series forecasting models using ARIMA and LSTM to predict call volumes for optimization.",
+        "Created dimensional data models and engineered scalable ETL pipelines for ML-ready datasets.",
+        "Built near-real-time analytics pipelines using Apache Spark Streaming to process CDR and network telemetry data.",
+        "Implemented speech-to-insight NLP pipelines leveraging Transformer-based summarization models.",
+        "Developed voice analytics solutions using Wav2Vec 2.0 to convert audio to text for sentiment analysis.",
+        "Supported hybrid search solutions by integrating SQL-based search with semantic embedding models.",
+        "Automated model packaging and deployment using Docker on AWS SageMaker platforms.",
+        "Packaged ML inference logic as RESTful APIs using Flask and containerized with Docker.",
+        "Integrated predictive model outputs with CRM platforms via secure REST APIs for agent-assist tools.",
+        "Developed interactive Tableau dashboards to monitor churn indicators and NPS trends.",
+        "Established monitoring and observability using AWS CloudWatch and ELK Stack for production service health."
+      ]
+    },
+    {
+      "client": "Delta Dental",
+      "location": "",
+      "role": "Data Engineer",
+      "duration": "Feb 2015 to May 2018",
+      "responsibilities": [
+        "Worked with Python, Pandas, NumPy, and Scikit-learn to support healthcare analytics and predictive modeling.",
+        "Performed large-scale data cleaning and validation on patient records, appointment logs, and claims datasets.",
+        "Extracted and manipulated data using SQL, writing complex joins and implementing data quality checks.",
+        "Built exploratory visualizations using Matplotlib, Seaborn, Tableau, and Power BI for clinical insights.",
+        "Assisted in developing baseline ML models like Logistic Regression and Random Forest for internal analytics.",
+        "Conducted extensive EDA on patient visit trends and hospital utilization patterns for healthcare optimization.",
+        "Created automated reporting workflows using Python scripts and SQL to reduce manual effort.",
+        "Integrated data from multiple systems including SQL Server, Oracle databases, and CSV/Excel files.",
+        "Applied text preprocessing using NLTK and spaCy on clinical notes to extract basic healthcare insights.",
+        "Worked with Apache Spark (PySpark) for handling large healthcare datasets and distributed transformations.",
+        "Supported ETL workflows by preparing data pipelines and assisting with batch processing in Hadoop environments.",
+        "Ensured HIPAA compliance and followed secure data-handling guidelines for sensitive patient information.",
+        "Designed dashboards to track KPIs such as patient wait times and admission trends for clinical management.",
+        "Collaborated with clinicians and IT teams to gather requirements and validate analytical outputs.",
+        "Participated in system testing (UAT) and used Pytest for writing validation checks in data pipelines.",
+        "Documented data processes, transformation logic, and dashboard specifications for reproducibility.",
+        "Created segmentation of patient groups using simple clustering techniques for operational insights.",
+        "Assisted in improving ETL performance by optimizing SQL queries and reducing processing time.",
+        "Used Git/GitHub for version control and code collaboration across the engineering team.",
+        "Supported development of standard templates for dashboards and visual reports used across departments."
       ]
     }
   ],
-  "certifications": [
-    {
-      "name": "Programming in Java",
-      "institution": "NPTEL"
-    },
-    {
-      "name": "Certification for Building RAG Models",
-      "institution": "Nvidia"
-    },
-    {
-      "name": "JavaScript",
-      "institution": "Udemy"
-    },
-    {
-      "name": "Web Development Internship",
-      "institution": "Verzeo"
-    },
-    {
-      "name": "Database Management System from NPTEL",
-      "institution": "NPTEL"
-    },
-    {
-      "name": "Master\u2019s in Web Development",
-      "institution": "Udemy"
-    },
-    {
-      "name": "Social Network Analysis",
-      "institution": "NPTEL"
-    }
-  ],
-  "projects": [
-    {
-      "name": "MULTI-DRONE VIRTUAL CAMERA GENERATION (Thesis Project)",
-      "description": [
-        "Designed and implemented a multi-drone aerial imaging system in AirSim, utilizing its physics simulation for optimized drone swarm flight paths, capturing high-resolution, time-synced images across large areas.",
-        "Developed an optimized image stitching pipeline using Light-Field Dynamic Homography (LDH), achieving superior alignment and minimal overlap compared to standard methods by leveraging advanced feature matching (SIFT/SURF) for precise homography estimation.",
-        "Successfully generated and validated high-resolution stitched panoramic views, processing sequential image data using advanced structures like Transformers and demonstrating expertise in computer vision for remote sensing.",
-        "Integrated an iterative optimization algorithm (LDH) into the stitching pipeline to refine camera poses and homography matrices post-initial estimation, minimizing accumulated registration errors across multiple drone frames.",
-        "Developed and utilized a custom software abstraction layer in C++ and Python to interface with AirSim\u2019s low-level controls, implementing Visual Servoing to control and synchronize four virtual drones for accurate data capture.",
-        "Constructed a novel synthetic dataset of large-area aerial scenes from the simulated environment, complete with ground-truth depth maps, used for quantitative evaluation of LDH against traditional stitching methods under varying conditions."
-      ]
-    },
-    {
-      "name": "CREATING FARMER COLLABORATION COMMUNITIES USING SOCIAL NETWORK",
-      "description": [
-        "Developed and deployed the entire social network platform using the MEAN stack (AngularJS, NodeJS, MongoDB) to facilitate the real-time sharing of crop disease updates and preventive measures.",
-        "Implemented a scalable CI/CD pipeline via CircleCI to automate integration and delivery of application updates. The full stack was containerized using Docker, ensuring a consistent and rapid deployment process.",
-        "Engineered robust backend services in NodeJS to manage user authentication, data synchronization, and dynamic feed/chat features based on specific crop types, demonstrating strong proficiency in backend development and asynchronous operations.",
-        "Successfully launched a functional, collaborative platform that provided farmers with a user-friendly mechanism for real-time agricultural information exchange."
-      ]
-    },
-    {
-      "name": "CROP DISEASE DETECTION USING CONVENTIONAL NEURAL NETWORK",
-      "description": [
-        "Developed and trained a Convolutional Neural Network (CNN) for early-stage crop disease prediction, utilizing frameworks like Keras/TensorFlow and implementing transfer learning to accelerate convergence and achieve high performance.",
-        "Managed the end-to-end image data pipeline, involving collecting, performing augmentation, normalization, and rigorous preprocessing using NumPy and OpenCV to enhance data quality and model generalization.",
-        "Achieved a quantifiable high accuracy (e.g., 96% on a held-out set) in disease identification, validating deep expertise in applied deep learning for agricultural AI.",
-        "Integrated this model into the Farmer collaboration community project, hosting the application and model on Amazon Web Services (AWS) Free Tier. Utilized advanced web sockets for secure, dynamic application connectivity, creating a unified and impactful solution."
-      ]
-    },
-    {
-      "name": "CHURN PREDICTION",
-      "description": [
-        "Designed and implemented a customer churn prediction model for the banking sector, evaluating multiple machine learning algorithms where Logistic Regression delivered the optimal balance of performance and interpretability.",
-        "Engineered features from transaction and customer metadata to enable proactive identification of customers likely to switch accounts, directly supporting customer retention strategies.",
-        "Developed a robust data preparation and feature selection workflow, reinforcing strong skills in applied Machine Learning and data preprocessing techniques."
-      ]
-    },
-    {
-      "name": "BOOK YOUR TICKETS",
-      "description": [
-        "Developed a decentralized ticket booking platform using Solidity for smart contract creation and MetaMask for secure wallet integration.",
-        "Enabled transparent, tamper-proof ticket purchases and ownership verification through blockchain technology.",
-        "Gained strong skills in full-stack web development and secure, decentralized application design, reinforcing expertise in distributed systems architecture."
-      ]
-    }
-  ]
+  "certifications": [],
+  "projects": []
 }

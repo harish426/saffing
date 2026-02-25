@@ -18,6 +18,8 @@ model User {
   password    String
   jobEmail    String?
   appPassword String?
+  phoneNumber String?
+  linkedinUrl String?
   
   sessions    Session[]
   resumes     Resume[]
