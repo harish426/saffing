@@ -70,20 +70,38 @@ This repository contains the development code for a Staffing Solution, consistin
     ```
     The server will be available at `http://127.0.0.1:8001`.
 
-## Configuration
 
-**Environment Variables**:
-Both the `web-app` and `back_processor/mailing_system` require `.env` files for configuration (e.g., Database URLs, API keys). 
-For frontend and backend, both combine require .env with Database_URL, and for back end require SMTP_SERVER, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD,(can be found in application created in google, use chatGPT to create it, for SMTP_SERVER use smtp.gmail.com, SMTP_PORT use 587, SMTP_USERNAME use your email address, SMTP_PASSWORD use app password from google account) GEMINI_API_KEY(can be found in google ai studio, but if you are using mormal gemini instead of pro, you have to setup payment, and charges for token usage.)
-
-
-# GEMINI_API_KEY
-
-Ensure these are created based on requirements (not committed to git).
-
----
-*Created: January 13, 2026*
 
 
 ### Issues in using google gen AI
 1. pip install --upgrade protobuf grpcio-tools langgraph-api for having similar working environment as in the documentation
+
+# Easy Setup Guide: DB URL + Gemini API Key + Run Docker Images
+
+This guide shows:
+1) How to get `DATABASE_URL` (Neon)  
+2) How to get `GEMINI_API_KEY` (Google AI Studio)  
+3) How to run **frontend** + **backend** Docker images on the same Docker network
+
+---
+
+## 1) Create a Database and Get `DATABASE_URL` (Neon)
+
+Most apps expect:
+
+- `DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DBNAME?sslmode=require`
+
+### Steps (Neon)
+1. Sign in to Neon and **create a Project** (this creates a Postgres database).
+2. Open your **Project Dashboard**.
+3. Click **Connect** (Connection Details).
+4. Select:
+   - **Branch**
+   - **Database**
+   - **Role/User**
+   - (Optional) **Pooled** vs **Direct**
+5. Copy the generated connection string → this is your `DATABASE_URL`.
+
+Example:
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require"
