@@ -25,5 +25,5 @@ services:
       # Port 8000 = internal container port (not the 8001 host-mapped port).
       - BACKEND_URL=http://backend:8000
     depends_on:
-      - backend
+      - backend-network
     restart: always

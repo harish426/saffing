@@ -105,3 +105,33 @@ Most apps expect:
 Example:
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require"
+```
+
+## Pull Docker Images
+docker pull harish426/staffing
+docker pull harish426/staffing-backend
+
+## Create Docker Network (shared network for both containers)
+
+docker network create backend-network
+
+## Run Backend Container
+docker run `
+  --name backend `
+  --network backend-network `
+  -e DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require" `
+  -e GEMINI_API_KEY="YOUR_GEMINI_KEY_HERE" `
+  -p 8000:8000 `
+  harish426/staffing-backend
+
+
+## Run Frontend Container
+
+docker run `
+  --name frontend `
+  --network ba~ckend-network `
+  -e DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require" `
+  -e BACKEND_URL="http://backend:8000" `
+  -p 3000:3000 `
+  harish426/staffing
+
