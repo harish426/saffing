@@ -8,3 +8,5 @@ faiss_store
 **/.env
 **/*.env
 ./resume
+**/app.log
+**/*.log
