@@ -2,6 +2,7 @@
 import Link from "next/link";
 import LogoutButton from "../../components/auth/LogoutButton";
 import SettingsMenu from "../../components/dashboard/SettingsMenu";
+import VendorGreetingButton from "../../components/dashboard/VendorGreetingButton";
 
 export default function Dashboard() {
     return (
@@ -48,6 +49,9 @@ export default function Dashboard() {
                     </div>
                     <p style={{ color: '#a1a1aa', fontSize: '0.8rem' }}>Toggle to show inactive records</p>
                 </div>
+
+                {/* Option 4: Greet All Vendors */}
+                <VendorGreetingButton />
             </div>
         </main>
     );

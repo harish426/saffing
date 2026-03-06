@@ -1,5 +1,7 @@
 from app.core.database import SessionLocal
-from app.models.models import JobDescription
+from app.models.models import JobDescription, User
+import logging
+logger = logging.getLogger(__name__)
 
 
 
@@ -30,6 +32,30 @@ class read_data:
                 url = os.getenv("DATABASE_URL", "NOT_SET")
                 f.write(f"DEBUG: DATABASE_URL starts with: {url[:20] if url else 'None'}...\n")
             
+    def get_unique_vendors(self, user_email: str):
+        try:
+            print(f"Fetching Unique Vendors for user: {user_email}...")
+            # Join JobDescription with User to filter by user_email
+            vendors = self.db.query(
+                JobDescription.vendorName, 
+                JobDescription.vendorEmail
+            ).join(User, JobDescription.userId == User.id).filter(
+                User.email == user_email,
+                JobDescription.vendorEmail != None,
+                JobDescription.vendorEmail != "",
+                JobDescription.isActive == True
+            ).distinct().all()
+
+            if not vendors:
+                print("No unique vendors found.")
+            else:
+                for vendor in vendors:
+                    print(f"Vendor: {vendor.vendorName} | Email: {vendor.vendorEmail}")
+
+            return vendors
+        except Exception as e:
+            logger.error(f"Error fetching unique vendors: {e}", exc_info=True)
+            return []
         finally:
             self.db.close()
 

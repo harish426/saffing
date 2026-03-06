@@ -235,7 +235,7 @@ async def send_resume(request:Request):
         if vendorEmail:
             # subject = f"Looking for AI/ML Engineer or Data Scientist role"
             # subject = f"Looking for {jobRole} role"
-            subject = f"Greate to hear from you about this {jobRole} role"
+            subject = f"Great to hear from you about this {jobRole} role"
             MAX_RETRIES = 3
             RETRY_DELAY = 10  # Seconds
             body = ""
@@ -309,26 +309,20 @@ async def send_resume(request:Request):
         else:
             logger.info("Vendor Email missing. Generating resume for download.")
             
-            # For download, we might not need the full email generation, 
-            # BUT we DO need 'job_requirements' which comes from 'ai_service.generate_initial_email_body'
-            # or we need to extract that verification logic.
-            # To avoid duplicate logic, I'll call the AI service but ignore the email body.
-            
             try:
-                search_query = jobDescription if jobDescription else jobRole
-                relevant_context = get_vector_store().search(search_query, k=3)
-                
                 # We reuse this to get job_requirements. 
-                # Ideally, we should refactor this to just get requirements if needed, 
-                # but 'generate_initial_email_body' does both.
                 # Assuming 'Vendor' can be generic if missing.
                 temp_vendor_name = vendorName if vendorName else "Hiring Manager"
                 
-                _, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(temp_vendor_name, jobRole, jobDescription, relevant_context)
+                # FIX: Pass user_ctx and use resume_data instead of undefined relevant_context
+                _, jd_summary, job_requirements = get_ai_service().generate_initial_email_body(
+                    temp_vendor_name, jobRole, jobDescription, resume_data, user_ctx
+                )
                 
                 from app.services.generate_resume_docx import generate_resume_buffer
 
-                resume_buffer = generate_resume_buffer(resume_data, jd_summary, job_requirements)
+                # FIX: Pass jobDescription to generate_resume_buffer for full context
+                resume_buffer = generate_resume_buffer(resume_data, jobDescription, job_requirements)
                 
                 if resume_buffer:
                     # Reset buffer position to beginning
@@ -351,6 +345,88 @@ async def send_resume(request:Request):
         logger.error(f"Error in send_resume: {e}", exc_info=True)
         return {"status": 404, "message": str(e)}
 
+async def process_and_send_greetings(user_email: str, current_user: User):
+    logger.info(f"Background Task Started: Sending Greetings to Vendors for {user_email}...")
+    
+    from app.core.database import get_latest_resume_for_user
+    with SessionLocal() as db:
+        resume_entry = get_latest_resume_for_user(db, current_user.id)
+        if not resume_entry or not resume_entry.resumeData:
+            logger.error(f"No resume data found for user {current_user.id}.")
+            return
+        resume_data = resume_entry.resumeData
+
+    vendors = read_data().get_unique_vendors(user_email)
+    if not vendors:
+        logger.warning(f"No unique vendors found for user {user_email}.")
+        return
+
+    # User Context for AI and signature
+    user_ctx = UserContext(
+        name=current_user.name or "",
+        email=current_user.jobEmail or current_user.email or "",
+        phone=current_user.phoneNumber or "",
+        linkedin_url=current_user.linkedinUrl or "",
+    )
+
+    try:
+        # Generate the core message ONCE
+        logger.info("Generating 200-word AI greeting core content...")
+        core_body = get_ai_service().generate_greeting_email(resume_data, user_ctx)
+
+        if not core_body or "Error" in core_body:
+            logger.error(f"Failed to generate greeting core content: {core_body}")
+            return
+
+        subject = f"Greeting from {current_user.name} - Inquiry regarding AI/ML Roles"
+
+        for vendor in vendors:
+            vendor_email = vendor.vendorEmail
+            if not vendor_email:
+                continue
+
+            vendor_name = vendor.vendorName or "Hiring Manager"
+            
+            # Assemble the final email body
+            full_body = f"Dear {vendor_name},\n\n{core_body}\n\n"
+            full_body += f"Best regards,\n{user_ctx.name}\n"
+            if user_ctx.phone:
+                full_body += f"{user_ctx.phone}\n"
+            full_body += f"{user_ctx.email}\n"
+            if user_ctx.linkedin_url:
+                full_body += f"{user_ctx.linkedin_url}\n"
+
+            logger.info(f"Sending greeting email to {vendor_name} ({vendor_email})")
+            mail(current_user).send_email(vendor_email, subject, full_body)
+            
+            # Rate limiting / polite delay
+            logger.info("Waiting 10 seconds before next greeting...")
+            time.sleep(10)
+
+    except Exception as e:
+        logger.error(f"Error in greeting background task: {e}", exc_info=True)
+
+@app.get("/send-greeting-to-all-vendors")
+async def send_greeting_to_all_vendors(user_email: str, background_tasks: BackgroundTasks = None):
+    """
+    Endpoint to send personalized greetings to all unique vendors for a specific user.
+    Takes user_email as an argument and retrieves vendors from the database.
+    """
+    if not user_email:
+        return {"status": "error", "message": "user_email is required"}
+
+    with SessionLocal() as db:
+        current_user = db.query(User).filter(User.email == user_email).first()
+        if not current_user:
+            return {"status": "error", "message": "User not found"}
+
+    if background_tasks:
+        background_tasks.add_task(process_and_send_greetings, user_email, current_user)
+        return {"status": "success", "message": f"Greeting process for {user_email} started in background."}
+    else:
+        # Fallback if BackgroundTasks is not injected (though FastAPI usually takes care of it)
+        await process_and_send_greetings(user_email, current_user)
+        return {"status": "success", "message": f"Greeting process for {user_email} completed."}
 @app.get("/groupby_vendor")
 async def groupby_vendor(request: Request):
     body = await request.json()

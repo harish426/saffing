@@ -3,6 +3,7 @@ version: '3.8'
 services:
   # ─── Backend (FastAPI mailing system) ───────────────────────────────────────
   backend:
+    image: ${DOCKERHUB_USERNAME}/marketing-backend:latest
     build: ./back_processor/mailing_system
     container_name: staffing-backend
     ports:
@@ -13,12 +14,11 @@ services:
 
   # ─── Frontend (Next.js marketing app) ───────────────────────────────────────
   frontend:
+    image: ${DOCKERHUB_USERNAME}/marketing-frontend:latest
     build: ./marketing_data_base/Marketing
     container_name: marketing_frontend
     ports:
       - "3000:3000"
-    env_file:
-      - ./marketing_data_base/Marketing/.env
     environment:
       - HOSTNAME=0.0.0.0
       # Docker internal DNS: "backend" resolves to the backend container above.

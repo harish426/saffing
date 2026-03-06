@@ -1,4 +1,4 @@
-from google import genai
+﻿from google import genai
 from google.genai import types
 import os
 import json
@@ -45,7 +45,10 @@ class GeminiService:
             linkedin_url=user_context.linkedin_url
         )
 
-        context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
+        if isinstance(relevant_context, dict):
+            context_str = json.dumps(relevant_context, indent=2)
+        else:
+            context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
         
         prompt = f"""
         You are a professional assistant helping a candidate apply for a job.
@@ -58,8 +61,8 @@ class GeminiService:
         Candidate's Resume Context (Matched from Vector Store):
         {context_str}
         
-        Task:
         Draft a concise, professional, and persuasive cold email body to the hiring manager/recruiter.
+        - Mention that I am open to and interested in C2C (Corp-to-Corp) or C2H (Contract-to-Hire) positions.
         - STRICTLY limit the body to exactly 3 sentences.
         - Analyze the resume context and job description to create a high-impact message.
         - Do not include the subject line in the output.
@@ -102,6 +105,14 @@ class GeminiService:
         return text_response if text_response else ""
 
 
+
+
+
+
+
+
+
+
     def generate_initial_email_body(self, vendor_name: str, job_role: str, job_description: str, relevant_context: list[str], user_context: UserContext = None) -> tuple[str, str, list[str]]:
         """
         Generates an initial contact email body, JD summary, and requirements list using Gemini AI.
@@ -123,10 +134,12 @@ class GeminiService:
             phone=user_context.phone,
             linkedin_url=user_context.linkedin_url
         )
+        if isinstance(relevant_context, dict):
+            context_str = json.dumps(relevant_context, indent=2)
+        else:
+            context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
 
-        context_str = "\n".join([c.get('text', '') if isinstance(c, dict) else str(c) for c in relevant_context])
-
-        # ── PHASE 1: Email body — uses function calling tools ──────────────────
+        # ΓöÇΓöÇ PHASE 1: Email body ΓÇö uses function calling tools ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
         email_prompt = f"""
         You are a professional assistant writing a cold job application email on behalf of a candidate.
 
@@ -147,20 +160,22 @@ class GeminiService:
            - No HTML tags, no subject line, no placeholders. Use \\n for line breaks.
 
         2. Use your available tools to fill in any candidate information the JD requests.
-           - Call tools dynamically based on what the JD asks for — do not hardcode assumptions.
+           - Call tools dynamically based on what the JD asks for ΓÇö do not hardcode assumptions.
            - Use resume context for fields like education/graduation details.
            - If a field cannot be filled by any tool or the resume context, omit it entirely (do not leave a blank line).
+        
+        3. add this line here, "I am a Green Card holder and open to C2C opportunities. Please let me know if my profile aligns with the role, and I would be happy to share more details for further consideration."
 
-        3. Always end with a sign-off (preceded by 2 newlines):
+        4. Always end with a sign-off (preceded by 2 newlines):
            Best regards,
            [candidate name from tool]
            [phone from tool, if available]
            [email from tool]
            [linkedin from tool, if available]
 
-        4. If the JD contains a structured candidate information form (a list of "Label: value" lines),
+        5. If the JD contains a structured candidate information form (a list of "Label: value" lines),
            fill it using your tools and resume context, then append it after the sign-off.
-           Only include lines you can fill — skip lines you cannot.
+           Only include lines you can fill ΓÇö skip lines you cannot.
         """
 
         contact_tools = [
@@ -187,7 +202,7 @@ class GeminiService:
         except Exception as e:
             email_body = f"Error generating email: {e}"
 
-        # ── PHASE 2: JD summary + requirements — uses JSON schema ──────────────
+        # ΓöÇΓöÇ PHASE 2: JD summary + requirements ΓÇö uses JSON schema ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
         analysis_prompt = f"""
         Analyze the following job description and extract structured information.
 
@@ -244,18 +259,81 @@ class GeminiService:
 
 
 
-    def get_Ai_Subject(self, job_role):
+
+
+    def generate_greeting_email(self, resume_data: dict, user_context: UserContext = None) -> str:
+        """
+        Generates a 300-word core content block based on resume data for a greeting email.
+        Does NOT include greeting or signature.
+        """
+        if not self.api_key:
+            return "Error: Gemini API key not configured."
+
+        if user_context is None:
+            user_context = UserContext()
+
+        # Load the user's data into tool context (not strictly needed here but good practice)
+        Tools.set_user_context(
+            name=user_context.name,
+            email=user_context.email,
+            phone=user_context.phone,
+            linkedin_url=user_context.linkedin_url
+        )
+
+        prompt = f"""
+        You are a professional assistant writing the core content for a greeting email on behalf of a candidate.
+
+        Candidate Name: {user_context.name}
+        Candidate Resume Data:
+        {json.dumps(resume_data, indent=2)}
+
+        Task:
+        Write a 200-word professional and detailed summary of the candidate's skills, experience, and knowledge, specifically focusing on their expertise in:
+        - AI/ML (Machine Learning)
+        - Agentic AI (LLM agents, planning, tool-use)
+        - Data Science
+        
+        Additionally, mention that I am open to and highly interested in C2C (Corp-to-Corp) or C2H (Contract-to-Hire) roles.
+
+        Instructions:
+        - Write in the first person ("I").
+        - Focus on specific technical achievements and tools mentioned in the resume data.
+        - Ensure the tone is confident and professional.
+        - **IMPORTANT**: Return ONLY the core body of the message. 
+        - **DO NOT** include any greetings (like "Dear...", "Hi...").
+        - **DO NOT** include any sign-offs or signatures (like "Best regards...", "Sincerely...").
+        - No HTML tags. Use direct newlines for formatting paragraphs.
+        """
+
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-flash-latest",
+                contents=prompt
+            )
+            email_content = response.text or ""
+            email_content = email_content.replace("<br>", "\n").replace("<br/>", "\n").replace("</br>", "\n")
+            return email_content.strip()
+        except Exception as e:
+            return f"Error generating greeting content: {e}"
+
+
+
+
+
+
+    def get_Ai_Subject(self, description, existing_summary):
         # print("Generating subject with gemini--latest...")
         prompt = f"""
-        You are a professional assistant helping a candidate apply for a job.
+        You are a professional assistant helping a candidate to update their Resume summary.
         
-        Job Role: {job_role}
+        Job Description: {description}
+        Existing Resume Summary: {existing_summary}
         
         Task:
-        Draft a four-words subject line for the job application. 
-        - only 4 words,
-        - Do not include placeholders like "[Your Name]". The candidate's name is Harish Jamallamudi.
-        
+        1. Identify the target role from the Job Description. The target role MUST be either "AI Engineer" or "Data Scientist". Choose the closest match.
+        2. If the "Existing Resume Summary" already starts with this target role or accurately reflects it, return the "Existing Resume Summary" exactly as it is.
+        3. Otherwise, update the "Existing Resume Summary" by ONLY changing the starting role name to the target role (either "AI Engineer" or "Data Scientist"), Don't change the rest of the summary.
+        4. Keep the rest of the summary, its length, and its realistic tone exactly the same. Do not add keywords from the Job Description.
         """
         try:    
             return self.client.models.generate_content(
@@ -299,7 +377,7 @@ class GeminiService:
         - **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs.
             - Example: If the JD asks for "Data Analysis" and the user "looked at call logs", rewrite it as "Performed Data Analysis on call logs...".
             --JD ask for communication skill, explain communication skills in projects
-        - If a specific requirement from the JD is totally missing from the user's experience, try to find relation withexisting experience clearly, and mention it, if no relation found then skip that point.
+        - If a specific requirement from the JD is totally missing from the user's experience, try to find relation with existing experience clearly, and mention it, if no relation found then skip that point.
         - The output must be a JSON list of strings, where each string is a bullet point.
         - Do not include markdown formatting like ```json ... ``` or bullet characters inside the strings. Just the raw text of the point.
         - Make the points punchy, impact-oriented, and keyword-rich where truthful.
@@ -307,7 +385,7 @@ class GeminiService:
         - Keep the same number of bullet points as the input.
         
         Example Output Format:
-        ["Developed an ETL pipeline using Python...", "Optimized database queries decreasing load time by 30%...","second point"]
+        ["Developed an ETL pipeline using Python...", "Optimized database queries..."]
         """
 
         max_retries = 3
@@ -333,10 +411,10 @@ class GeminiService:
                         return points
                     else:
                         # Fallback if AI returns something else, just split by newlines
-                        return [line.strip("-•* ") for line in text_response.split('\n') if line.strip()]
+                        return [line.strip("-ΓÇó* ") for line in text_response.split('\n') if line.strip()]
                 except json.JSONDecodeError:
                      # Fallback if not valid JSON
-                    return [line.strip("-•* ") for line in text_response.split('\n') if line.strip()]
+                    return [line.strip("-ΓÇó* ") for line in text_response.split('\n') if line.strip()]
 
             except Exception as e:
                 # print(f"Attempt {attempt + 1} failed: {e}")
@@ -349,6 +427,7 @@ class GeminiService:
                 return current_content
         
         return current_content
+
 
     def tailor_technical_skills(self, current_skills: dict, job_requirements: list[str]) -> dict:
         """

@@ -83,10 +83,18 @@ class Resume:
         
 
     def add_summary(self, job_description):
-
         summary = self.data.get("professional_summary", {})
-        if summary.get("overview", "") == "" and summary.get("key_highlights", []) == []:
+        if not summary.get("overview") and not summary.get("key_highlights"):
             return
+
+        try:
+            # Fix: Use get_Ai_Subject for the overview text (assuming that's the intention for single-string tailoring)
+            # and DO NOT overwrite the summary dict with the result string.
+            tailored_overview = self.ai.get_Ai_Subject(job_description, summary.get("overview", ""))
+            summary["overview"] = tailored_overview
+        except Exception as e:
+            # print(f"Error tailoring summary overview: {e}")
+            pass
         self.add_section_heading("Professional Summary")
         
         overview = summary.get("overview", "")
@@ -94,8 +102,7 @@ class Resume:
             p = self.doc.add_paragraph(overview)
             p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             p.paragraph_format.space_after = Pt(8)
-            # Glue overview to the first highlight if highlights exist
-            if summary.get("key_highlights", []):
+            if summary.get("key_highlights"):
                 p.paragraph_format.keep_with_next = True
 
         highlights = summary.get("key_highlights", [])
@@ -104,7 +111,7 @@ class Resume:
                 highlights = self.ai.generate_tailored_resume_content(highlights, job_description)
             except Exception as e:
                 # print(e)
-                highlights= summary.get("key_highlights",[])
+                highlights = summary.get("key_highlights", [])
             for i, item in enumerate(highlights):
                 p = self.doc.add_paragraph(item, style='List Bullet')
                 p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
@@ -232,41 +239,50 @@ class Resume:
                 self._add_job_entry(job) 
 
     def add_projects(self):
-        projects = self.data.get("projects", [])
+        if self.data.get("projects",[]) == []:
+            return
+        projects =self.data.get("projects",[])
         if projects:
             self.add_section_heading("Projects")
             for project in projects:
-                name = project.get("name", "")
-                description = project.get("description", [])
-                
-                p = self.doc.add_paragraph()
-                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                run = p.add_run(name)
-                self.set_font(run, bold=True, size=11)
-                
-                for desc in description:
-                    p_desc = self.doc.add_paragraph(desc, style='List Bullet')
-                    p_desc.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                    p_desc.paragraph_format.space_after = Pt(2)
-                
-                self.doc.add_paragraph() # Spacer
-
+                self._add_project_entry(project)
+    def _add_project_entry(self, project):
+        name = project.get("name", "")
+        description = project.get("description", [])
+        
+        # Line 1: Project Name (Bold)
+        p_header = self.doc.add_paragraph()
+        p_header.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY 
+        
+        run_name = p_header.add_run(name)
+        self.set_font(run_name, bold=True, size=11)
+        p_header.paragraph_format.keep_with_next = True
+        
+        # Responsibilities
+        for r in description:
+            p_r = self.doc.add_paragraph(r, style='List Bullet')
+            p_r.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            p_r.paragraph_format.space_after = Pt(2)
+        
+        # Spacer between projects
+        self.doc.add_paragraph() 
+    
     def add_certifications(self):
-        certs = self.data.get("certifications", [])
-        if certs:
+        if self.data.get("certifications", []) == [] or self.data.get("certifications", []) == {}:
+            return
+        certifications = self.data.get("certifications", [])
+        if certifications:
             self.add_section_heading("Certifications")
-            
-            # Extract names and join with commas
-            cert_names = [c.get("name", "") for c in certs if c.get("name")]
-            cert_institutions = [c.get("institution", "") for c in certs if c.get("institution")]
-            for i in range(len(cert_names)):
-                cert_names[i] = cert_names[i] + " (" + cert_institutions[i] + ")"
-            cert_string = ", ".join(cert_names)
-            
-            p = self.doc.add_paragraph(cert_string)
-            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-            self.set_font(p.runs[0] if p.runs else p.add_run(cert_string), size=10) 
-
+            self._add_certification_entry(certifications)
+    def _add_certification_entry(self, certifications):
+        cert_names=[]
+        
+        for cert in certifications:
+            cert_names.append(cert.get("name", "") + " (" + cert.get("institution", "") + ")")
+        cert_string = ", ".join(cert_names)
+        p = self.doc.add_paragraph(cert_string)
+        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        self.set_font(p.runs[0] if p.runs else p.add_run(cert_string), size=10) 
     def save(self, output_path):
         self.doc.save(output_path)
 
