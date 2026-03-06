@@ -1,8 +1,8 @@
 # Stage 1: Builder
-# Uses pre-built base image with all deps already installed.
-# To rebuild the base (only needed when requirements.txt changes):
-#   docker build -f Dockerfile.base -t staffing-backend-base .
-FROM staffing-backend-base as builder
+# To rebuild and push the base image:
+#   docker build -f Dockerfile.base -t harish426/staffing-backend-base:latest .
+#   docker push harish426/staffing-backend-base:latest
+FROM harish426/staffing-backend-base:latest as builder
 
 WORKDIR /app
 

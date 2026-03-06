@@ -19,6 +19,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Build and push Backend Base image
+        uses: docker/build-push-action@v5
+        with:
+          context: back_processor/mailing_system
+          file: back_processor/mailing_system/Dockerfile.base
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/staffing-backend-base:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/staffing-backend-base:cache
+          cache-to: type=inline
+
       - name: Build and push Backend image
         uses: docker/build-push-action@v5
         with:
