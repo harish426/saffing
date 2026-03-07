@@ -30,7 +30,7 @@ export async function sendResume(jobData: {
             vendorName: vendorName || ''
         });
 
-        const backendUrl = process.env.BACKEND_URL || 'http://localhost:8001';
+        const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
         const url = `${backendUrl}/send_resume?${params.toString()}`;
         console.log("Fetching URL:", url);
 

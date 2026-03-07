@@ -46,4 +46,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 >> --network beckend-network `
 >> -e DATABASE_URL="" `
 >> -e BACKEND_URL=http://backend:8000 `
->>  -p 3000:3000 staffing
+>>  -p 3000:3000 marketing-frontend

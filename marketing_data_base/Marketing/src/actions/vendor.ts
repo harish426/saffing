@@ -10,8 +10,8 @@ export async function sendGreetingEmails() {
             return { error: "Unauthorized. Please log in again." };
         }
 
-        const backendUrl = "http://127.0.0.1:8001/send-greeting-to-all-vendors";
-        const url = `${backendUrl}?user_email=${encodeURIComponent(user.email)}`;
+        const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+        const url = `${backendUrl}/send-greeting-to-all-vendors?user_email=${encodeURIComponent(user.email)}`;
 
         const response = await fetch(url);
         const data = await response.json();

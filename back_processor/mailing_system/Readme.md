@@ -27,4 +27,4 @@ docker run `
 >> --network beckend-network `
 >> -e DATABASE_URL="" `
 >> -e GEMINI_API_KEY="" `
->>  -p 3000:3000 staffing-backend
+>>  -p 3000:3000 marketing-backend
