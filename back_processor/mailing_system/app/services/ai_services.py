@@ -61,13 +61,27 @@ class GeminiService:
         Candidate's Resume Context (Matched from Vector Store):
         {context_str}
         
-        Draft a concise, professional, and persuasive cold email body to the hiring manager/recruiter.
-        - Mention that I am open to and interested in C2C (Corp-to-Corp) or C2H (Contract-to-Hire) positions.
-        - STRICTLY limit the body to exactly 3 sentences.
-        - Analyze the resume context and job description to create a high-impact message.
+        Draft a professional and persuasive cold email body to the hiring manager/recruiter following this EXACT structure:
+        
+        1. Opening sentence: "I am interested in the {job_role} role."
+        2. Experience summary: "With over [Years] of experience in [Domain], I bring strong expertise in [List 5-7 key technical skills/tools from resume relevant to JD]."
+        3. Visa/Availability: "I am on [Visa Status from resume/context] and available to join immediately."
+        
+        4. Key Highlights Section:
+           "Key Highlights of my profile:"
+           - [Highlight 1: Specific technical achievement or project]
+           - [Highlight 2: Specific technical achievement or project]
+           - [Highlight 3: Specific technical achievement or project]
+           - [Highlight 4: Specific technical achievement or project]
+           - [Highlight 5: Specific technical achievement or project]
+        
+        5. Closing: "I believe my [Specific Expertise] makes me a strong fit for this role."
+        
+        Instructions:
+        - Analyze the resume context and job description to fill in the details.
+        - If Visa status is not clearly found, use 'H1B' as a default if likely, or omit that specific sentence if unsure, but try to follow the structure.
         - Do not include the subject line in the output.
         - ABSOLUTELY NO HTML TAGS or <br>. Use actual newlines (\n) for line breaks.
-        - Separate sentences with a single newline.
 
         For the sign-off (preceded by 2 newlines):
         - Call get_candidate_name() to get the candidate's name.
@@ -153,18 +167,28 @@ class GeminiService:
         {context_str}
 
         Instructions:
-        1. Write a 3-sentence cold email body:
+        1. Write a cold email body following this EXACT structure:
            - Greet the vendor (e.g. "Hi {vendor_name},").
-           - Write in first person as the candidate.
-           - Match the pitch to the JD (AI/ML/Data Science focus if relevant, Data Engineering if applicable, otherwise request consideration).
-           - No HTML tags, no subject line, no placeholders. Use \\n for line breaks.
+           - Opening sentence: "I am interested in the {job_role} role."
+           - Experience summary: "With over [Years] of experience in [Domain], I bring strong expertise in [List 5-7 key technical skills/tools from resume relevant to JD]."
+           - Visa/Availability: "I am on [Visa Status from resume/context] and available to join immediately."
+           
+           - Key Highlights Section:
+             "Key Highlights of my profile:"
+             - [Highlight 1: Specific technical achievement or project]
+             - [Highlight 2: Specific technical achievement or project]
+             - [Highlight 3: Specific technical achievement or project]
+             - [Highlight 4: Specific technical achievement or project]
+             - [Highlight 5: Specific technical achievement or project]
+             
+           - Closing: "I believe my [Specific Expertise] makes me a strong fit for this role."
 
         2. Use your available tools to fill in any candidate information the JD requests.
-           - Call tools dynamically based on what the JD asks for ΓÇö do not hardcode assumptions.
+           - Call tools dynamically based on what the JD asks for — do not hardcode assumptions.
            - Use resume context for fields like education/graduation details.
            - If a field cannot be filled by any tool or the resume context, omit it entirely (do not leave a blank line).
         
-        3. add this line here, "I am a Green Card holder and open to C2C opportunities. Please let me know if my profile aligns with the role, and I would be happy to share more details for further consideration."
+        3. No HTML tags, no subject line, no placeholders. Use \n for line breaks.
 
         4. Always end with a sign-off (preceded by 2 newlines):
            Best regards,
@@ -175,7 +199,7 @@ class GeminiService:
 
         5. If the JD contains a structured candidate information form (a list of "Label: value" lines),
            fill it using your tools and resume context, then append it after the sign-off.
-           Only include lines you can fill ΓÇö skip lines you cannot.
+           Only include lines you can fill — skip lines you cannot.
         """
 
         contact_tools = [
@@ -360,7 +384,7 @@ class GeminiService:
 
         
         prompt = f"""
-        You are an expert resume writer. Your task is to rewrite the specific job experience points for the client to align with a target Job Description, WHILE STRICTLY PRESERVING THE TRUTH.
+        You are an expert resume writer. Your task is to rewrite specific job experience points for the client to align with a target Job Description, WHILE STRICTLY PRESERVING THE TRUTH.
         
         Target Job Description:
         {job_description}
@@ -369,23 +393,29 @@ class GeminiService:
         {current_content}
         
         Instructions:
-        - Analyze the "Current Experience Points" and "Target Job Description".
-        - Rewrite the experience points to highlight relevance to the JD, but **DO NOT FABRICATE** experience.
-        - **CRITICAL**: Do NOT replace the tools/technologies the user actually used with ones from the JD unless they are generic synonyms(means they similar tools but different providers). 
-            - Example: If the user used "Faiss" and the JD asks for "Pinecone", change it to "Pinecone", because pinecone is a also vector database.
-            - Example: If the user worked in "Telecom", do NOT change it to "Healthcare" just because the JD is for a Healthcare company.
-        - **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs.
-            - Example: If the JD asks for "Data Analysis" and the user "looked at call logs", rewrite it as "Performed Data Analysis on call logs...".
-            --JD ask for communication skill, explain communication skills in projects
-        - If a specific requirement from the JD is totally missing from the user's experience, try to find relation with existing experience clearly, and mention it, if no relation found then skip that point.
-        - The output must be a JSON list of strings, where each string is a bullet point.
-        - Do not include markdown formatting like ```json ... ``` or bullet characters inside the strings. Just the raw text of the point.
-        - Make the points punchy, impact-oriented, and keyword-rich where truthful.
-        - Should not include "*" or "-" etc. only plain text.
-        - Keep the same number of bullet points as the input.
+        1. **Capability Highlighting**: Analyze the "Current Experience Points" and "Target Job Description". Rewrite the experience points to highlight the candidate's capabilities in specific areas the client is looking for. Details should be punchy and impact-oriented.
+        
+        2. **Technical Skill Mapping**: Map technical skills and tools the user actually used to contextually relevant alternatives specified in the JD.
+            - Example: If the candidate used "AWS (S3, Lambda, EC2)" and the JD asks for "Azure", frame the experience using Azure service names like "Azure (Blob Storage, Azure Functions, VM Instances)" as they are direct functional equivalents.
+            - Example: Map "Faiss" to "Pinecone" if both are used for vector search in the context.
+            - **CRITICAL**: Only map tools that are functional equivalents. Preserve the underlying technical logic.
+        
+        3. **Domain Preservation**: **STRICTLY** preserve the industry/domain of work.
+            - **DO NOT** change the industry the user worked in (e.g., Telecom, Healthcare, Finance) to match the company's domain in the JD.
+            - If the user worked in "Healthcare" and the JD is for "Pharmaceutical", keep it as "Healthcare".
+        
+        4. **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs, while adhering to the mapping rules above.
+        
+        5. **Handling Gaps**: If a specific requirement from the JD is missing from the user's experience, find a relation to existing experience if possible, otherwise skip that point.
+        
+        6. **Formatting**:
+            - The output must be a JSON list of strings, where each string is a bullet point.
+            - Do not include markdown formatting like ```json ... ``` or bullet characters inside the strings.
+            - Keep the same number of bullet points as the input.
+            - Do not include symbols like "*" or "-" at the start of strings.
         
         Example Output Format:
-        ["Developed an ETL pipeline using Python...", "Optimized database queries..."]
+        ["Spearheaded the development of scalable data pipelines using Azure Functions...", "Optimized SQL queries in a Healthcare context..."]
         """
 
         max_retries = 3
