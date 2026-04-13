@@ -213,29 +213,31 @@ class Resume:
         self.doc.add_paragraph() 
 
     def add_experience_part_one(self, job_description):
-        if self.data.get("professional_experience", []) == []:
-            return
         experience = self.data.get("professional_experience", [])
-        if experience:
-            # Force new page for Experience as requested -- REMOVED per user feedback
-            # self.doc.add_page_break() 
-            
-            self.add_section_heading("Professional Experience")
-            
-            # First 2 experiences
-            for job in experience[:2]:
-                try:
-                    job_resposibilities = self.ai.generate_tailored_resume_content(job["responsibilities"], job_description)
-                except Exception as e:
-                    job_resposibilities = job["responsibilities"]
-                job["responsibilities"]=job_resposibilities
-                self._add_job_entry(job)
+        if not experience:
+            return
+        
+        self.add_section_heading("Professional Experience")
+        
+        # First 2 experiences
+        for job in experience[:2]:
+            try:
+                job_resposibilities = self.ai.generate_tailored_resume_content(job["responsibilities"], job_description)
+                job["responsibilities"] = job_resposibilities
+            except Exception:
+                pass
+            self._add_job_entry(job)
 
-    def add_experience_part_two(self):
+    def add_experience_part_two(self, job_description):
         experience = self.data.get("professional_experience", [])
         if experience and len(experience) > 2:
             # Remaining experiences
             for job in experience[2:]:
+                try:
+                    job_resposibilities = self.ai.generate_tailored_resume_content(job["responsibilities"], job_description)
+                    job["responsibilities"] = job_resposibilities
+                except Exception:
+                    pass
                 self._add_job_entry(job) 
 
     def add_projects(self):
@@ -286,51 +288,6 @@ class Resume:
     def save(self, output_path):
         self.doc.save(output_path)
 
-    def add_projects(self):
-        if self.data.get("projects",[]) == []:
-            return
-        projects =self.data.get("projects",[])
-        if projects:
-            self.add_section_heading("Projects")
-            for project in projects:
-                self._add_project_entry(project)
-    def _add_project_entry(self, project):
-        name = project.get("name", "")
-        description = project.get("description", [])
-        
-        # Line 1: Project Name (Bold)
-        p_header = self.doc.add_paragraph()
-        p_header.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY 
-        
-        run_name = p_header.add_run(name)
-        self.set_font(run_name, bold=True, size=11)
-        p_header.paragraph_format.keep_with_next = True
-        
-        # Responsibilities
-        for r in description:
-            p_r = self.doc.add_paragraph(r, style='List Bullet')
-            p_r.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-            p_r.paragraph_format.space_after = Pt(2)
-        
-        # Spacer between projects
-        self.doc.add_paragraph() 
-    
-    def add_certifications(self):
-        if self.data.get("certifications", []) == [] or self.data.get("certifications", []) == {}:
-            return
-        certifications = self.data.get("certifications", [])
-        if certifications:
-            self.add_section_heading("Certifications")
-            self._add_certification_entry(certifications)
-    def _add_certification_entry(self, certifications):
-        cert_names=[]
-        
-        for cert in certifications:
-            cert_names.append(cert.get("name", "") + " (" + cert.get("institution", "") + ")")
-        cert_string = ", ".join(cert_names)
-        p = self.doc.add_paragraph(cert_string)
-        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-        self.set_font(p.runs[0] if p.runs else p.add_run(cert_string), size=10) 
         
        
 
@@ -348,7 +305,7 @@ def create_resume_from_json(json_path, output_path, job_description, requirement
     resume.add_education()
     resume.add_skills(requirements)
     resume.add_experience_part_one(job_description)
-    resume.add_experience_part_two()
+    resume.add_experience_part_two(job_description)
     resume.add_projects()
     resume.add_certifications()
     resume.save(output_path)
@@ -382,7 +339,7 @@ def generate_resume_buffer(resume_data, job_description, requirements):
     resume.add_education()
     resume.add_skills(requirements)
     resume.add_experience_part_one(job_description)
-    resume.add_experience_part_two()
+    resume.add_experience_part_two(job_description)
     resume.add_projects()
     resume.add_certifications()
     buffer = io.BytesIO()

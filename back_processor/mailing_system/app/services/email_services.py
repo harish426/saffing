@@ -3,9 +3,13 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 import os
+import logging
 from dotenv import load_dotenv
 
-load_dotenv()
+_env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
+load_dotenv(dotenv_path=_env_path)
+
+logger = logging.getLogger(__name__)
 
 
 from app.models.models import User
@@ -31,7 +35,8 @@ class mail:
         """
 
         if not all([self.smtp_server, self.smtp_port, self.smtp_username, self.smtp_password]):
-            print("Error: SMTP credentials are incomplete in environment variables.")
+            logger.error("SMTP credentials are incomplete. server=%s port=%s username=%s password_set=%s",
+                         self.smtp_server, self.smtp_port, self.smtp_username, bool(self.smtp_password))
             return False        
 
         try:
@@ -52,10 +57,10 @@ class mail:
             server.sendmail(self.smtp_username, to_email, text)
             server.quit()
             
-            # print(f"Email sent successfully to {to_email}")
+            logger.info("Email sent successfully to %s", to_email)
             return True
         except Exception as e:
-            # print(f"Failed to send email: {e}")
+            logger.error("Failed to send email to %s: %s", to_email, e, exc_info=True)
             return False
 
     def send_email_with_pdf(self, to_email: str, subject: str, body: str, pdf_path: str) -> bool:
@@ -64,7 +69,8 @@ class mail:
         Returns True if successful, False otherwise.
         """
         if not all([self.smtp_server, self.smtp_port, self.smtp_username, self.smtp_password]):
-            print("Error: SMTP credentials are incomplete in environment variables.")
+            logger.error("SMTP credentials are incomplete. server=%s port=%s username=%s password_set=%s",
+                         self.smtp_server, self.smtp_port, self.smtp_username, bool(self.smtp_password))
             return False
 
         try:
@@ -81,8 +87,8 @@ class mail:
                     attach.add_header('Content-Disposition', 'attachment', filename=os.path.basename(pdf_path))
                     msg.attach(attach)
             else:
-                 print(f"Error: PDF file not found at {pdf_path}")
-                 return False
+                logger.error("PDF file not found at %s", pdf_path)
+                return False
 
             port = int(self.smtp_port)
             server = smtplib.SMTP(self.smtp_server, port)
@@ -93,10 +99,10 @@ class mail:
             server.sendmail(self.smtp_username, to_email, text)
             server.quit()
             
-            # print(f"Email with PDF sent successfully to {to_email}")
+            logger.info("Email with PDF sent successfully to %s", to_email)
             return True
         except Exception as e:
-            # print(f"Failed to send email with PDF: {e}")
+            logger.error("Failed to send email with PDF to %s: %s", to_email, e, exc_info=True)
             return False
 
     def send_email_with_attachment_buffer(self, to_email: str, subject: str, body: str, file_buffer, filename: str) -> bool:
@@ -104,7 +110,8 @@ class mail:
         Sends an email with an attachment from a memory buffer.
         """
         if not all([self.smtp_server, self.smtp_port, self.smtp_username, self.smtp_password]):
-            print("Error: SMTP credentials are incomplete in environment variables.")
+            logger.error("SMTP credentials are incomplete. server=%s port=%s username=%s password_set=%s",
+                         self.smtp_server, self.smtp_port, self.smtp_username, bool(self.smtp_password))
             return False
 
         try:
@@ -114,7 +121,7 @@ class mail:
             msg['Subject'] = subject
 
             msg.attach(MIMEText(body, 'plain'))
-
+            logger.debug("Preparing email with attachment buffer: filename=%s", filename)
             # Attach from buffer
             if file_buffer:
                 # Determine content type based on extension, defaulting to application/octet-stream
@@ -131,8 +138,8 @@ class mail:
                 attach.add_header('Content-Disposition', 'attachment', filename=filename)
                 msg.attach(attach)
             else:
-                 print(f"Error: File buffer is empty")
-                 return False
+                logger.error("File buffer is empty for attachment: %s", filename)
+                return False
 
             port = int(self.smtp_port)
             server = smtplib.SMTP(self.smtp_server, port)
@@ -143,10 +150,10 @@ class mail:
             server.sendmail(self.smtp_username, to_email, text)
             server.quit()
             
-            # print(f"Email with attachment ({filename}) sent successfully to {to_email}")
+            logger.info("Email with attachment (%s) sent successfully to %s", filename, to_email)
             return True
         except Exception as e:
-            # print(f"Failed to send email with attachment: {e}")
+            logger.error("Failed to send email with attachment to %s: %s", to_email, e, exc_info=True)
             return False
 
 

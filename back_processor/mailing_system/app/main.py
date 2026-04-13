@@ -1,5 +1,7 @@
 from fastapi import FastAPI, BackgroundTasks
 import time
+import os
+import json
 from app.core.database import engine, SessionLocal
 from sqlalchemy import text
 from pydantic import BaseModel
@@ -13,6 +15,10 @@ from fastapi import Request
 from app.models.models import User
 import logging
 from app.core.logging_config import setup_logging
+from app.services.ai_services_fresher import GeminiServiceFresher
+from app.services.generate_resume_fresher import generate_fresher_resume_buffer
+from fastapi.responses import StreamingResponse
+import io
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -79,6 +85,11 @@ async def convert_resume_to_json(request: Request):
     except Exception as e:
         logger.error(f"Error in convert_resume_to_json: {e}", exc_info=True)
         return {"status": "error", "message": str(e)}
+
+class FresherResumeBuilderRequest(BaseModel):
+    description: str
+    question: str
+    user_id: str = None
 
 class EmailRequest(BaseModel):
     to_email: str
@@ -441,6 +452,51 @@ async def groupby_vendor(request: Request):
 def groupby_location():
     pass
     
+@app.post("/fresher_resume_builder")
+async def fresher_resume_builder(request: FresherResumeBuilderRequest):
+    """
+    Builder for fresher resumes: tailoring, cover letters, and Q&A.
+    """
+    logger.info(f"Fresher Resume Builder Request: {request.question[:50]}...")
+    
+    try:
+        # 1. Load the base resume data (Local only as requested)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        harish_json_path = os.path.join(os.path.dirname(base_dir), "data", "resume", "resume_harish.json")
+        
+        if os.path.exists(harish_json_path):
+            with open(harish_json_path, "r") as f:
+                resume_data = json.load(f)
+                user_name = resume_data.get("personal_info", {}).get("name", "Harish")
+        else:
+            return {"status": "error", "message": "Local resume data not found."}
+
+        # 2. Process the request with AI
+        svc = GeminiServiceFresher()
+        result = svc.process_builder_request(resume_data, request.description, request.question)
+
+        # 3. Handle the response based on type
+        if result["type"] == "text":
+            return {"status": "success", "intent": result["intent"], "content": result["content"]}
+        
+        elif result["type"] == "resume":
+            # Generate the tailored resume as a buffer
+            tailored_json = result["content"]
+            buffer = generate_fresher_resume_buffer(tailored_json)
+            
+            filename = f"harish_resume.docx"
+            return StreamingResponse(
+                buffer,
+                media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                headers={"Content-Disposition": f"attachment; filename={filename}"}
+            )
+        else:
+            return {"status": "error", "message": result["content"]}
+
+    except Exception as e:
+        logger.error(f"Error in fresher_resume_builder: {e}", exc_info=True)
+        return {"status": "error", "message": str(e)}
+
 @app.get("/get_contact_vendor_details")
 def vendor_details():
     pass

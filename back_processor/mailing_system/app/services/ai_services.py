@@ -1,4 +1,4 @@
-﻿from google import genai
+from google import genai
 from google.genai import types
 import os
 import json
@@ -327,6 +327,7 @@ class GeminiService:
         - **DO NOT** include any greetings (like "Dear...", "Hi...").
         - **DO NOT** include any sign-offs or signatures (like "Best regards...", "Sincerely...").
         - No HTML tags. Use direct newlines for formatting paragraphs.
+        - The output should be a plain text block as I written, Don't add "-" or "*" for bullet points, it should seems like persona.
         """
 
         try:
@@ -386,6 +387,8 @@ class GeminiService:
         prompt = f"""
         You are an expert resume writer. Your task is to rewrite specific job experience points for the client to align with a target Job Description, WHILE STRICTLY PRESERVING THE TRUTH.
         
+        The primary goal is to achieve a >90% match score with the target Job Description by strategically emphasizing relevant skills and experiences.
+        
         Target Job Description:
         {job_description}
 
@@ -396,15 +399,16 @@ class GeminiService:
         1. **Capability Highlighting**: Analyze the "Current Experience Points" and "Target Job Description". Rewrite the experience points to highlight the candidate's capabilities in specific areas the client is looking for. Details should be punchy and impact-oriented.
         
         2. **Technical Skill Mapping**: Map technical skills and tools the user actually used to contextually relevant alternatives specified in the JD.
-            - Example: If the candidate used "AWS (S3, Lambda, EC2)" and the JD asks for "Azure", frame the experience using Azure service names like "Azure (Blob Storage, Azure Functions, VM Instances)" as they are direct functional equivalents.
-            - Example: Map "Faiss" to "Pinecone" if both are used for vector search in the context.
+            - **CRITICAL FORMAT**: When a candidate's tool (Tool A) is a functional equivalent to a JD-requested tool (Tool B), use the format: **"Tool B (Tool A)"** or **"Tool B (via Tool A)"**.
+            - Example: If candidate used "AWS (S3, Lambda, EC2)" and JD asks for "Azure", frame as "Azure (AWS) services like Blob Storage (S3), Azure Functions (Lambda), and VM Instances (EC2)".
+            - Example: Map "Faiss" to "Pinecone" as "Pinecone (Faiss)".
             - **CRITICAL**: Only map tools that are functional equivalents. Preserve the underlying technical logic.
         
-        3. **Domain Preservation**: **STRICTLY** preserve the industry/domain of work.
+        3. **Domain & Stream Preservation**: **STRICTLY** preserve the industry/domain of work and the candidate's core "stream of work".
             - **DO NOT** change the industry the user worked in (e.g., Telecom, Healthcare, Finance) to match the company's domain in the JD.
-            - If the user worked in "Healthcare" and the JD is for "Pharmaceutical", keep it as "Healthcare".
+            - Ensure the candidate's professional identity remains consistent and realistic; do not fundamentally alter their career path just to fit the JD.
         
-        4. **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs, while adhering to the mapping rules above.
+        4. **Keyword Integration**: Use keywords from the JD to *frame* the experience or as starting action verbs, while adhering to the mapping rules above. Aim for high density of JD terms to maximize alignment scores.
         
         5. **Handling Gaps**: If a specific requirement from the JD is missing from the user's experience, find a relation to existing experience if possible, otherwise skip that point.
         
@@ -415,7 +419,7 @@ class GeminiService:
             - Do not include symbols like "*" or "-" at the start of strings.
         
         Example Output Format:
-        ["Spearheaded the development of scalable data pipelines using Azure Functions...", "Optimized SQL queries in a Healthcare context..."]
+        ["Spearheaded the development of scalable data pipelines using Azure (via AWS) Functions...", "Optimized SQL queries in a Healthcare context..."]
         """
 
         max_retries = 3
